@@ -1,0 +1,6 @@
+{
+  "name": "Libreta de Dominó PR",
+  "description": "Anotador de dominó para Puerto Rico con estadísticas, gestión de rondas y calculadora de fichas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
