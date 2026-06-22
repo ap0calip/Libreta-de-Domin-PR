@@ -93,7 +93,7 @@ fun DominoApp(viewModel: DominoViewModel) {
                 title = {
                     Text(
                         text = when (currentScreen) {
-                            is Screen.Dashboard -> "Libreta de Dominó PR"
+                            is Screen.Dashboard -> "Libreta de Dominó Boricua"
                             is Screen.GameSetup -> "Nueva Partida"
                             is Screen.ActiveGame -> "Marcador en Vivo"
                             is Screen.AddRound -> "Anotar Ronda"
