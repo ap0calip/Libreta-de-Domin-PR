@@ -257,41 +257,12 @@ fun DashboardScreen(
                 shape = RoundedCornerShape(16.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Image(
-                        painter = painterResource(id = R.drawable.domino_banner),
-                        contentDescription = "Domino Banner",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                    // Gradient Overlay for visibility
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.8f))
-                                )
-                            )
-                    )
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(16.dp)
-                    ) {
-                        Text(
-                            text = "¡Juega Domino de Verdad!",
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Anota, calcula trancas y guarda tus chivas.",
-                            color = Color.White.copy(alpha = 0.8f),
-                            fontSize = 13.sp
-                        )
-                    }
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.bandera_pr),
+                    contentDescription = "Bandera de Puerto Rico",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
 
@@ -1643,12 +1614,25 @@ fun ActiveGameScreen(
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp
                                 )
-                                Text(
-                                    text = "Tipo: ${round.winType.capitalized()} " +
-                                            if (!round.notes.isNullOrBlank()) "(${round.notes})" else "",
-                                    fontSize = 11.sp,
-                                    color = Color.Gray
-                                )
+                                val detailsList = mutableListOf<String>()
+                                if (round.winType != "DOMINACION" && !round.winType.equals("Dominación", ignoreCase = true)) {
+                                    detailsList.add(round.winType.capitalized())
+                                }
+                                if (round.isCapicu) detailsList.add("Capicú")
+                                if (round.isChuchazo) detailsList.add("Chuchazo")
+                                
+                                val extraNotes = round.notes?.trim()
+                                if (!extraNotes.isNullOrBlank() && !extraNotes.equals("Dominación", ignoreCase = true) && !extraNotes.equals("DOMINACION", ignoreCase = true)) {
+                                    detailsList.add(extraNotes)
+                                }
+
+                                if (detailsList.isNotEmpty()) {
+                                    Text(
+                                        text = detailsList.joinToString(", "),
+                                        fontSize = 11.sp,
+                                        color = Color.Gray
+                                    )
+                                }
                                 if (round.bonusPoints > 0) {
                                     Text(
                                         text = "+${round.basePoints} base | +${round.bonusPoints} bono",
@@ -1905,7 +1889,6 @@ fun AddRoundScreen(
                         }
                     },
                     label = { Text("Puntos anotados en la mano") },
-                    placeholder = { Text("Ej: 35") },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done

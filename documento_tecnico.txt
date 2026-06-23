@@ -1,0 +1,120 @@
+========================================================================
+                 DOCUMENTO TÉCNICO: ANOTADOR DOMINO BORICUA
+========================================================================
+
+Información del Proyecto:
+- Nombre de la Aplicación: Domino Boricua
+- ID de Aplicación (applicationId): com.aistudio.dominoboricua.kxmpzq
+- Lenguaje Core: Kotlin (100%)
+- UI Engine: Jetpack Compose (Material Design 3)
+- Almacenamiento Local (Persistencia): Room SQLite Database
+- Arquitectura: MVVM (Model-View-ViewModel) con Clean Architecture de una capa
+
+------------------------------------------------------------------------
+1. INTRODUCCIÓN Y PROPÓSITO
+------------------------------------------------------------------------
+"Domino Boricua" es una solución móvil nativa para Android diseñada para
+facilitar la anotación, control y registro estadístico de juegos de dominó,
+bajo las costumbres de juego clásicas de Puerto Rico. Permite prescindir del
+papel y lápiz tradicionales, ofreciendo una interfaz eficiente para calcular
+los marcadores de juegos individuales, llevar un registro detallado de cada mano
+(ronda) y recopilar estadísticas detalladas e históricas por jugador y equipo.
+
+------------------------------------------------------------------------
+2. ARQUITECTURA DEL SOFTWARE
+------------------------------------------------------------------------
+La aplicación utiliza una arquitectura limpia estructurada bajo el patrón
+patrón de diseño MVVM (Model-View-ViewModel), recomendada por Google.
+
+A. Capa de Modelos (Model / Persistencia con Room)
+   El almacenamiento persistente se gestiona localmente en el dispositivo
+   utilizando SQLite encapsulado a través de la librería oficial Jetpack Room.
+   - Database (`DominoDatabase.kt`): Define los esquemas de tablas e inicializa
+     la base de datos local SQLite. Incluye migraciones automáticas.
+   - Entidades (`Entities.kt`):
+     * `Player`: Representa a un jugador. Almacena su nombre, fecha de registro y
+       acumulado estadístico (manos jugadas, ganadas).
+     * `Game`: Representa un juego completo. Almacena puntajes meta, estado de la
+       partida (activa/completada), marcas de tiempo, y el equipo ganador.
+     * `GameRound`: Representa una mano individual jugada. Almacena los puntos base
+       anotados, bonificaciones (por Capicú o Chuchazo), el tipo de victoria
+       (como Tranque) y referencias de relación a `Game`.
+   - Data Access Objects (DAOs):
+     * Interfaces de consulta reactiva que retornan Flujos de Kotlin (`Flow`)
+       para mantener la interfaz de usuario sincronizada en tiempo real.
+
+B. Capas de Negocio y Repositorio (`DominoRepository.kt`)
+   Actúa como la única fuente de verdad (Single Source of Truth) para la UI.
+   Gestiona la inserción de juegos, adición y cálculo de rondas de puntuación,
+   y la actualización de estadísticas globales acumulativas de los jugadores.
+
+C. Capa de Presentación (ViewModel / `DominoViewModel.kt`)
+   Conserva el estado de la UI frente a cambios de configuración (como rotación
+   de pantalla).
+   - Recibe eventos del usuario (ej. cambiar nombre, iniciar juego, registrar ronda).
+   - Expone estados inmutables como `StateFlow` utilizando las propiedades del ciclo
+     de vida de Android (`collectAsStateWithLifecycle`).
+
+D. Capa de Vista (UI / `DominoApp.kt`)
+   Construida enteramente en Jetpack Compose con un diseño unificado y reactivo.
+   Se alimenta de los `StateFlow` expuestos por el `DominoViewModel`.
+
+------------------------------------------------------------------------
+3. ESPECIFICACIÓN DE MÓDULOS DE UI (PANTALLAS)
+------------------------------------------------------------------------
+El flujo del usuario se divide mediante navegación declarativa reactiva:
+
+- Dashboard / Inicio:
+  Muestra el historial de juegos pasados (fecha, marcador final, ganador)
+  y un acceso directo para configurar una nueva partida de dominó.
+
+- Configuración de Juego / Setup:
+  Permite ingresar los nombres de los 4 jugadores, configurar el puntaje máximo
+  meta (ej. 200 o 500 puntos) y alternar el uso de bonos personalizados de
+  reglas de Puerto Rico (bono por ganar con Capicú o Chuchazo).
+
+- Área de Partida Activa (Scoreboard):
+  Visualiza de forma prominente la puntuación actual de ambos equipos, de manera
+  equilibrada. Contiene un historial visual de cada ronda/mano anotada.
+
+- Formulario de Registro de Mano:
+  Calcula de manera semiautomática los puntajes ingresados por el usuario.
+  Implementa toggles para eventos especiales tales como "Tranque", "Capicú" y
+  "Chuchazo". Evita la sobrecarga cognitiva adaptando la UI a los datos reales.
+
+- Pantalla de Estadísticas y Perfiles:
+  Presenta un panel analítico detallado del desempeño de cada jugador, mostrando
+  tasas de victorias (Win Rate), rondas jugadas y eficiencia general.
+
+------------------------------------------------------------------------
+4. SISTEMA DE DISEÑO (COLORES Y ESTILO)
+------------------------------------------------------------------------
+De conformidad con los estándares de Material Design 3, la aplicación cuenta
+con soporte fluido para temas Claro (Light Theme) y Oscuro (Dark Theme),
+utilizando una paleta inspirada directamente en la bandera y tradición de PR:
+
+Colores Base (`Color.kt`):
+- BoricuaBlue (`#0CB7F2`): El azul celeste tradicional e histórico de la bandera de PR.
+- BoricuaRedDark (`#DC2626`): El vibrante rojo de la franja boricua.
+- DominoSlate (`#0B132B`): Un índigo medianoche profundo que actúa como lienzo de fondo.
+- DominoSlateLight (`#1C2541`): Tono ligeramente más claro para elevación de tarjetas.
+- WoodBrown (`#78350F`): Representa la calidez de las mesas tradicionales de dominó de madera.
+
+------------------------------------------------------------------------
+5. PARÁMETROS TÉCNICOS Y COMPILACIÓN
+------------------------------------------------------------------------
+- Target SDK: 36 (Android 15)
+- Min SDK: 24 (Android 7.0 - Nougat)
+- Sistema de compilación: Gradle Kotlin DSL (build.gradle.kts)
+- Herramienta de compilación complementaria: KSP (Kotlin Symbol Processing)
+  para optimizar la generación del código de base de datos Room.
+
+------------------------------------------------------------------------
+6. NOTAS DE MANTENIMIENTO DEL CÓDIGO
+------------------------------------------------------------------------
+1. El archivo de recursos principal de control UI es `/app/src/main/java/com/example/ui/DominoApp.kt`.
+2. Las definiciones de color se encapsulan estrictamente en `com/example/ui/theme/Color.kt`
+   y el tema unificado en `com/example/ui/theme/Theme.kt`.
+3. Cualquier cambio estructural en el modelo de base de datos requiere incrementar
+   la versión en `DominoDatabase` y definir la estrategia de migración asociada.
+========================================================================

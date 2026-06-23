@@ -1,0 +1,53 @@
+========================================================================
+             PROPUESTA DE TEXTOS PARA GOOGLE PLAY CONSOLE
+========================================================================
+
+------------------------------------------------------------------------
+OPCIÓN 1: DESCRIPCIÓN CORTA (Máximo 80 caracteres)
+------------------------------------------------------------------------
+¡Olvídate del papel! Anota tu dominó de la forma más rápida y boricua.
+
+------------------------------------------------------------------------
+OPCIÓN 2: DESCRIPCIÓN CORTA ALTERNATIVA (Máximo 80 caracteres)
+------------------------------------------------------------------------
+La libreta digital definitiva para tus partidas de dominó con sabor de aquí.
+
+========================================================================
+DESCRIPCIÓN LARGA / FULL DESCRIPTION (Máximo 4,000 caracteres)
+================================================================--------
+
+🀽 ¡Olvídate de buscar papel y lápiz en medio del chinchorreo o la fiesta familiar! 🀽
+
+Bienvenido a la **Libreta de Dominó Boricua**, la aplicación definitiva diseñada especialmente para los amantes del dominó en Puerto Rico. Esta aplicación combina la tradición del juego de mesa más querido con la velocidad y elegancia de una libreta digital inteligente, limpia y totalmente optimizada.
+
+Ya sea en la marquesina de casa, en la playa, en el negocio de la esquina o en un torneo familiar, la Libreta de Dominó Boricua hace todo el trabajo matemático por ti para que solo te concentres en la estrategia y en darle el pase al oponente.
+
+---
+
+### 🎨 CARACTERÍSTICAS PRINCIPALES:
+
+• **Anotación Sencilla y Rápida:** Registra los puntos de cada mano de forma automática, sin errores de cálculo y con una interfaz limpia que cualquiera en la mesa puede usar.
+• **Reglas y Bonos de Puerto Rico:** Configura tus partidas con reglas de nuestra tierra. Activa o desactiva de forma directa las bonificaciones especiales por ganar con **Capicú** o **Chuchazo** en un solo toque.
+• **Registro de Tranques Inteligente:** Anota de manera detallada las manos cerradas por Tranque, calculando de manera justa las puntuaciones de cada equipo bajo el formato oficial.
+• **Historial Completo de Partidas:** Visualiza todas las rondas de tu juego activo y consulta el registro histórico de juegos anteriores para recordar quién es el verdadero campeón de la mesa.
+• **Estadísticas Detalladas de Jugadores:** ¿Quién es el que más partidas gana? ¿Quién tiene mayor efectividad? Consulta perfiles individuales, ratios de victoria, manos jugadas y estadísticas históricas completas de cada jugador.
+• **Diseño Auténtico y Elegante:** Disfruta de un apartado visual de primer nivel con una paleta de colores premium inspirada en los colores históricos y tradicionales de Puerto Rico, integrada de manera fluida tanto en tema claro como oscuro.
+
+---
+
+### 🛡️ PRIVACIDAD ABSOLUTA Y SIN INTERRUPCIONES:
+
+• **Funcionamiento 100% Offline (Sin Internet):** No necesitas señal móvil ni datos de internet para usar la aplicación. Funciona perfectamente en el campo, en la playa o en interiores de manera local.
+• **Sin Anuncios Orgánicos Molestos en Pantalla:** Disfruta de tu juego sin anuncios intrusivos que arruinen los momentos tensos y emocionantes de la partida.
+• **Tus Datos son Tuyos:** Los nombres de tus jugadores, historial de puntajes y estadísticas se guardan de manera local y privada en tu dispositivo Android. No almacenamos nada en servidores ni compartimos información con terceros.
+
+---
+
+### ⚙️ PERSONALIZACIÓN AL INSTANTE:
+• Define los nombres de pila o alias de los 4 jugadores de la mesa.
+• Elige el puntaje meta de la partida de forma personalizada (¿Una rápida a 200 puntos o una tradicional a 500 puntos?).
+• Activa o desactiva bonificaciones especiales según el estilo de juego de tu grupo de amigos o club.
+
+¡Haz que tu próxima mano sea inolvidable y lleva el control del juego a nivel profesional! 
+
+**Descarga Libreta de Dominó Boricua hoy y sé el juez oficial de la mesa.** 🇵🇷🀽
