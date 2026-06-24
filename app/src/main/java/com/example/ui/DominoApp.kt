@@ -311,7 +311,7 @@ fun DashboardScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = activeGame.team1Name,
                                     fontWeight = FontWeight.Bold,
@@ -319,10 +319,10 @@ fun DashboardScreen(
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                                Text(text = "${activeGame.team1Score}", fontSize = 28.sp, fontWeight = FontWeight.Black)
+                                Text(text = "${activeGame.team1Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
                             }
-                            Text(text = "VS", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "VS", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 8.dp))
+                            Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = activeGame.team2Name,
                                     fontWeight = FontWeight.Bold,
@@ -330,7 +330,7 @@ fun DashboardScreen(
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                                Text(text = "${activeGame.team2Score}", fontSize = 28.sp, fontWeight = FontWeight.Black)
+                                Text(text = "${activeGame.team2Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
                             }
                         }
 
@@ -496,7 +496,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             // Team 1 details
-                            Column(modifier = Modifier.weight(1.2f)) {
+                            Column(modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = game.team1Name,
                                     fontWeight = if (game.winnerTeamIndex == 1) FontWeight.Bold else FontWeight.Normal,
@@ -521,8 +521,7 @@ fun DashboardScreen(
                             // Score display
                             Row(
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 4.dp),
+                                    .padding(horizontal = 6.dp),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
@@ -530,23 +529,29 @@ fun DashboardScreen(
                                     text = "${game.team1Score}",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
+                                    maxLines = 1,
+                                    softWrap = false,
                                     color = if (game.winnerTeamIndex == 1) MaterialTheme.colorScheme.primary else Color.Gray
                                 )
                                 Text(
                                     text = " - ",
+                                    maxLines = 1,
+                                    softWrap = false,
                                     color = Color.LightGray
                                 )
                                 Text(
                                     text = "${game.team2Score}",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 20.sp,
+                                    maxLines = 1,
+                                    softWrap = false,
                                     color = if (game.winnerTeamIndex == 2) MaterialTheme.colorScheme.primary else Color.Gray
                                 )
                             }
 
                             // Team 2 details
                             Column(
-                                modifier = Modifier.weight(1.2f),
+                                modifier = Modifier.weight(1f),
                                 horizontalAlignment = Alignment.End
                             ) {
                                 Text(
@@ -1330,11 +1335,24 @@ fun ActiveGameScreen(
 
                         val winningTeamName = if (game.winnerTeamIndex == 1) game.team1Name else game.team2Name
                         Text(
-                            text = "👑 $winningTeamName 👑",
+                            text = "🏆 $winningTeamName 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.primary
+                        )
+
+                        val winningPlayers = if (game.winnerTeamIndex == 1) {
+                            "${viewModel.getPlayerName(game.player1Id)}" + (if (game.player2Id != null) " y ${viewModel.getPlayerName(game.player2Id)}" else "")
+                        } else {
+                            "${viewModel.getPlayerName(game.player3Id)}" + (if (game.player4Id != null) " y ${viewModel.getPlayerName(game.player4Id)}" else "")
+                        }
+                        Text(
+                            text = winningPlayers,
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Medium,
+                            textAlign = TextAlign.Center,
+                            color = Color(0xFF78350F)
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
@@ -1430,6 +1448,8 @@ fun ActiveGameScreen(
                                 text = "${game.team1Score}",
                                 fontSize = 48.sp,
                                 fontWeight = FontWeight.Black,
+                                maxLines = 1,
+                                softWrap = false,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
@@ -1486,6 +1506,8 @@ fun ActiveGameScreen(
                                 text = "${game.team2Score}",
                                 fontSize = 48.sp,
                                 fontWeight = FontWeight.Black,
+                                maxLines = 1,
+                                softWrap = false,
                                 color = BoricuaRed
                             )
                             Text(
