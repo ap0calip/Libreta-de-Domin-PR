@@ -1604,45 +1604,63 @@ fun ActiveGameScreen(
             }
         } else {
             items(rounds.reversed()) { round ->
-                val roundWinnerName = if (round.winnerTeamIndex == 1) game.team1Name else game.team2Name
-                val winColor = if (round.winnerTeamIndex == 1) MaterialTheme.colorScheme.primary else BoricuaRed
+                val isTeam1 = round.winnerTeamIndex == 1
+                val roundWinnerName = if (isTeam1) game.team1Name else game.team2Name
+                val winColor = if (isTeam1) MaterialTheme.colorScheme.primary else BoricuaRed
 
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(36.dp)
-                                    .background(winColor.copy(alpha = 0.1f), RoundedCornerShape(18.dp)),
-                                contentAlignment = Alignment.Center
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = if (isTeam1) Alignment.CenterStart else Alignment.CenterEnd
+                ) {
+                    Card(modifier = Modifier.fillMaxWidth(0.92f)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (isTeam1) {
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .background(winColor.copy(alpha = 0.1f), RoundedCornerShape(18.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "M${round.roundNumber}",
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 13.sp,
+                                        color = winColor
+                                    )
+                                }
+                                Spacer(modifier = Modifier.width(12.dp))
+                            }
+
+                            Column(
+                                horizontalAlignment = if (isTeam1) Alignment.Start else Alignment.End,
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text(
-                                    text = "M${round.roundNumber}",
-                                    fontWeight = FontWeight.Black,
-                                    fontSize = 13.sp,
-                                    color = winColor
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = "Ganó: $roundWinnerName",
+                                    text = roundWinnerName,
                                     fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp
+                                    fontSize = 14.sp,
+                                    textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
                                 )
+                                Text(
+                                    text = "${round.points} pts",
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 18.sp,
+                                    color = winColor,
+                                    textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
+                                )
+
                                 val detailsList = mutableListOf<String>()
                                 if (round.winType != "DOMINACION" && !round.winType.equals("Dominación", ignoreCase = true)) {
                                     detailsList.add(round.winType.capitalized())
                                 }
                                 if (round.isCapicu) detailsList.add("Capicú")
                                 if (round.isChuchazo) detailsList.add("Chuchazo")
-                                
+
                                 val extraNotes = round.notes?.trim()
                                 if (!extraNotes.isNullOrBlank() && !extraNotes.equals("Dominación", ignoreCase = true) && !extraNotes.equals("DOMINACION", ignoreCase = true)) {
                                     detailsList.add(extraNotes)
@@ -1652,25 +1670,38 @@ fun ActiveGameScreen(
                                     Text(
                                         text = detailsList.joinToString(", "),
                                         fontSize = 11.sp,
-                                        color = Color.Gray
+                                        color = Color.Gray,
+                                        textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
                                     )
                                 }
                                 if (round.bonusPoints > 0) {
                                     Text(
-                                        text = "+${round.basePoints} base | +${round.bonusPoints} bono",
+                                        text = "${round.basePoints} base | ${round.bonusPoints} bono",
                                         fontSize = 10.sp,
                                         color = BoricuaBlue,
-                                        fontWeight = FontWeight.SemiBold
+                                        fontWeight = FontWeight.SemiBold,
+                                        textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
+                                    )
+                                }
+                            }
+
+                            if (!isTeam1) {
+                                Spacer(modifier = Modifier.width(12.dp))
+                                Box(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .background(winColor.copy(alpha = 0.1f), RoundedCornerShape(18.dp)),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "M${round.roundNumber}",
+                                        fontWeight = FontWeight.Black,
+                                        fontSize = 13.sp,
+                                        color = winColor
                                     )
                                 }
                             }
                         }
-                        Text(
-                            text = "+${round.points} pts",
-                            fontWeight = FontWeight.Black,
-                            fontSize = 18.sp,
-                            color = winColor
-                        )
                     }
                 }
             }

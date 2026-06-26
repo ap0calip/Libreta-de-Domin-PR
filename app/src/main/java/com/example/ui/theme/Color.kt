@@ -24,7 +24,7 @@ val BackgroundLight = Color(0xFFF0F9FF) // Sophisticated sky blue-tinted backgro
 val SurfaceLight = Color(0xFFFFFFFF)
 
 // M3 Dark Scheme Defaults
-val PrimaryDark = Color(0xFF38BDF8) // Soft luminous sky blue
-val SecondaryDark = Color(0xFFF87171) // Pastel rose/red highlight
+val PrimaryDark = BoricuaBlue //Color(0xFF38BDF8) // Soft luminous sky blue
+val SecondaryDark = BoricuaRed //Color(0xFFF87171) // Pastel rose/red highlight
 val BackgroundDark = DominoSlate
 val SurfaceDark = DominoSlateLight
