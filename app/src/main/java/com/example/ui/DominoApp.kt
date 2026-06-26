@@ -84,6 +84,7 @@ fun DominoApp(viewModel: DominoViewModel) {
     val players by viewModel.allPlayers.collectAsStateWithLifecycle()
     val games by viewModel.allGames.collectAsStateWithLifecycle()
     val activeGame by viewModel.activeGame.collectAsStateWithLifecycle()
+    val activeGames by viewModel.activeGames.collectAsStateWithLifecycle()
     val activeGameRounds by viewModel.activeGameRounds.collectAsStateWithLifecycle()
 
     Scaffold(
@@ -152,7 +153,7 @@ fun DominoApp(viewModel: DominoViewModel) {
                         DashboardScreen(
                             players = players,
                             games = games,
-                            activeGame = activeGame,
+                            activeGames = activeGames,
                             onStartNewGame = { navigateTo(Screen.GameSetup) },
                             onResumeGame = { id ->
                                 viewModel.resumeGame(id)
@@ -232,7 +233,7 @@ fun DominoApp(viewModel: DominoViewModel) {
 fun DashboardScreen(
     players: List<Player>,
     games: List<Game>,
-    activeGame: Game?,
+    activeGames: List<Game>,
     onStartNewGame: () -> Unit,
     onResumeGame: (Int) -> Unit,
     onViewStats: () -> Unit,
@@ -266,13 +267,23 @@ fun DashboardScreen(
             }
         }
 
-        // Active Game Reminder
-        if (activeGame != null) {
+        // Active Games Reminder
+        if (activeGames.isNotEmpty()) {
             item {
+                Text(
+                    text = if (activeGames.size > 1) "PARTIDAS EN CURSO (${activeGames.size})" else "PARTIDA EN CURSO",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(start = 4.dp, top = 8.dp)
+                )
+            }
+            items(activeGames) { gameItem ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp)),
+                        .border(1.5.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(12.dp))
+                        .clickable { onResumeGame(gameItem.id) },
                     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                     shape = RoundedCornerShape(12.dp)
                 ) {
@@ -290,14 +301,14 @@ fun DashboardScreen(
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = "PARTIDA EN CURSO",
+                                    text = "${gameItem.gameMode}",
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 12.sp
                                 )
                             }
                             Text(
-                                text = "Meta: ${activeGame.maxPoints} pts",
+                                text = "Meta: ${gameItem.maxPoints} pts",
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -313,38 +324,25 @@ fun DashboardScreen(
                         ) {
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = activeGame.team1Name,
+                                    text = gameItem.team1Name,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                                Text(text = "${activeGame.team1Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
+                                Text(text = "${gameItem.team1Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
                             }
                             Text(text = "VS", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 8.dp))
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Text(
-                                    text = activeGame.team2Name,
+                                    text = gameItem.team2Name,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 15.sp,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis
                                 )
-                                Text(text = "${activeGame.team2Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
+                                Text(text = "${gameItem.team2Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
                             }
-                        }
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Button(
-                            onClick = { onResumeGame(activeGame.id) },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(8.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = DominoMint)
-                        ) {
-                            Icon(imageVector = Icons.Default.SportsEsports, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(text = "Reanudar Partido")
                         }
                     }
                 }
@@ -1402,6 +1400,17 @@ fun ActiveGameScreen(
 
         // Live Scoreboard
         item {
+            val team1Color = when {
+                game.team1Score > game.team2Score -> BoricuaBlue
+                game.team1Score < game.team2Score -> BoricuaRed
+                else -> MaterialTheme.colorScheme.primary
+            }
+            val team2Color = when {
+                game.team2Score > game.team1Score -> BoricuaBlue
+                game.team2Score < game.team1Score -> BoricuaRed
+                else -> BoricuaRed
+            }
+
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -1411,7 +1420,7 @@ fun ActiveGameScreen(
                         text = "MARCADOR",
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        color = Color.Gray
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -1442,7 +1451,8 @@ fun ActiveGameScreen(
                                 fontSize = 16.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                color = team1Color
                             )
                             Text(
                                 text = "${game.team1Score}",
@@ -1450,7 +1460,7 @@ fun ActiveGameScreen(
                                 fontWeight = FontWeight.Black,
                                 maxLines = 1,
                                 softWrap = false,
-                                color = MaterialTheme.colorScheme.primary
+                                color = team1Color
                             )
                             Text(
                                 text = "${viewModel.getPlayerName(game.player1Id)}" +
@@ -1500,7 +1510,8 @@ fun ActiveGameScreen(
                                 fontSize = 16.sp,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                color = team2Color
                             )
                             Text(
                                 text = "${game.team2Score}",
@@ -1508,7 +1519,7 @@ fun ActiveGameScreen(
                                 fontWeight = FontWeight.Black,
                                 maxLines = 1,
                                 softWrap = false,
-                                color = BoricuaRed
+                                color = team2Color
                             )
                             Text(
                                 text = "${viewModel.getPlayerName(game.player3Id)}" +
@@ -1606,7 +1617,19 @@ fun ActiveGameScreen(
             items(rounds.reversed()) { round ->
                 val isTeam1 = round.winnerTeamIndex == 1
                 val roundWinnerName = if (isTeam1) game.team1Name else game.team2Name
-                val winColor = if (isTeam1) MaterialTheme.colorScheme.primary else BoricuaRed
+                
+                // Calculate dynamic colors according to the current scoreboard
+                val team1Color = when {
+                    game.team1Score > game.team2Score -> BoricuaBlue
+                    game.team1Score < game.team2Score -> BoricuaRed
+                    else -> MaterialTheme.colorScheme.primary
+                }
+                val team2Color = when {
+                    game.team2Score > game.team1Score -> BoricuaBlue
+                    game.team2Score < game.team1Score -> BoricuaRed
+                    else -> BoricuaRed
+                }
+                val winColor = if (isTeam1) team1Color else team2Color
 
                 Box(
                     modifier = Modifier.fillMaxWidth(),
@@ -1644,6 +1667,7 @@ fun ActiveGameScreen(
                                     text = roundWinnerName,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 14.sp,
+                                    color = winColor,
                                     textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
                                 )
                                 Text(
@@ -1678,7 +1702,7 @@ fun ActiveGameScreen(
                                     Text(
                                         text = "${round.basePoints} base | ${round.bonusPoints} bono",
                                         fontSize = 10.sp,
-                                        color = BoricuaBlue,
+                                        color = Color.Gray,
                                         fontWeight = FontWeight.SemiBold,
                                         textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
                                     )
@@ -1856,7 +1880,18 @@ fun AddRoundScreen(
                 Text(text = "¿Quién ganó la mano?", fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
-                    val t1Color = if (selectedWinnerIndex == 1) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    val team1Color = when {
+                        game.team1Score > game.team2Score -> BoricuaBlue
+                        game.team1Score < game.team2Score -> BoricuaRed
+                        else -> MaterialTheme.colorScheme.primary
+                    }
+                    val team2Color = when {
+                        game.team2Score > game.team1Score -> BoricuaBlue
+                        game.team2Score < game.team1Score -> BoricuaRed
+                        else -> BoricuaRed
+                    }
+
+                    val t1Color = if (selectedWinnerIndex == 1) ButtonDefaults.buttonColors(containerColor = team1Color)
                     else ButtonDefaults.outlinedButtonColors()
                     Button(
                       onClick = { selectedWinnerIndex = 1 },
@@ -1869,7 +1904,7 @@ fun AddRoundScreen(
                         Text(game.team1Name, fontSize = 13.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
 
-                    val t2Color = if (selectedWinnerIndex == 2) ButtonDefaults.buttonColors(containerColor = BoricuaRed)
+                    val t2Color = if (selectedWinnerIndex == 2) ButtonDefaults.buttonColors(containerColor = team2Color)
                     else ButtonDefaults.outlinedButtonColors()
                     Button(
                       onClick = { selectedWinnerIndex = 2 },
@@ -1984,7 +2019,7 @@ fun AddRoundScreen(
                     text = "📊 Desglose de Puntos para $winnerTeamName",
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSecondaryContainer
+                    color = Color.Gray
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 

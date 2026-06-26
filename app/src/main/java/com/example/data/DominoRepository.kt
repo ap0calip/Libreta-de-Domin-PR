@@ -44,11 +44,11 @@ class DominoRepository(private val dominoDao: DominoDao) {
         bonusChuchazo: Int = 100,
         useBonuses: Boolean = false
     ): Long {
-        // First cancel any previous ACTIVE games, to keep it clean (only one active game at a time)
-        val active = dominoDao.getActiveGame()
-        if (active != null) {
-            dominoDao.updateGame(active.copy(status = "CANCELED", completedTimestamp = System.currentTimeMillis()))
-        }
+        // We no longer cancel previous ACTIVE games, to permit more than one game in progress.
+        // val active = dominoDao.getActiveGame()
+        // if (active != null) {
+        //     dominoDao.updateGame(active.copy(status = "CANCELED", completedTimestamp = System.currentTimeMillis()))
+        // }
 
         val game = Game(
             gameMode = gameMode,
