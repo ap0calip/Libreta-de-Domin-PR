@@ -241,6 +241,7 @@ fun DashboardScreen(
     viewModel: DominoViewModel
 ) {
     var showAddPlayerDialog by remember { mutableStateOf(false) }
+    var gameToDeleteId by remember { mutableStateOf<Int?>(null) }
 
     LazyColumn(
         modifier = Modifier
@@ -256,13 +257,16 @@ fun DashboardScreen(
                     .fillMaxWidth()
                     .height(180.dp),
                 shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.bandera_pr),
                     contentDescription = "Bandera de Puerto Rico",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
                 )
             }
         }
@@ -308,7 +312,7 @@ fun DashboardScreen(
                                 )
                             }
                             Text(
-                                text = "Meta: ${gameItem.maxPoints} pts",
+                                text = if (gameItem.maxPoints == 500 && gameItem.useBonuses) "Meta: 500 pts (Bono)" else "Meta: ${gameItem.maxPoints} pts",
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -343,6 +347,42 @@ fun DashboardScreen(
                                 )
                                 Text(text = "${gameItem.team2Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
                             }
+                        }
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        HorizontalDivider(color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.15f))
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${viewModel.getPlayerName(gameItem.player1Id)}" +
+                                        (if (gameItem.player2Id != null) " y ${viewModel.getPlayerName(gameItem.player2Id)}" else ""),
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Start,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            
+                            Spacer(modifier = Modifier.width(16.dp))
+                            
+                            Text(
+                                text = "${viewModel.getPlayerName(gameItem.player3Id)}" +
+                                        (if (gameItem.player4Id != null) " y ${viewModel.getPlayerName(gameItem.player4Id)}" else ""),
+                                fontSize = 11.sp,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.End,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                         }
                     }
                 }
@@ -648,7 +688,7 @@ fun DashboardScreen(
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 TextButton(
-                                    onClick = { onDeleteGame(game.id) },
+                                    onClick = { gameToDeleteId = game.id },
                                     colors = ButtonDefaults.textButtonColors(contentColor = BoricuaRed)
                                 ) {
                                     Icon(imageVector = Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -721,6 +761,46 @@ fun DashboardScreen(
                     showAddPlayerDialog = false
                     errorMessage = ""
                 }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
+    // Confirmation Dialog for Deleting a Game
+    if (gameToDeleteId != null) {
+        AlertDialog(
+            onDismissRequest = { gameToDeleteId = null },
+            title = {
+                Text(
+                    text = "Eliminar Partida",
+                    fontWeight = FontWeight.Bold
+                )
+            },
+            text = {
+                Text(
+                    text = "¿Estás seguro de que deseas eliminar esta partida del historial? Esta acción no se puede deshacer.",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        gameToDeleteId?.let { id ->
+                            onDeleteGame(id)
+                        }
+                        gameToDeleteId = null
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = BoricuaRed)
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { gameToDeleteId = null }
+                ) {
                     Text("Cancelar")
                 }
             }
@@ -1101,7 +1181,7 @@ fun GameSetupScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 PlayerDropdownStateInput(
-                    label = "Jugador 1 (Obligatorio)",
+                    label = "Jugador 1",
                     value = p1Name,
                     onValueChange = { p1Name = it },
                     existingPlayers = players
@@ -1109,7 +1189,7 @@ fun GameSetupScreen(
 
                 if (isCouplesMode) {
                     PlayerDropdownStateInput(
-                        label = "Pareja Jugador 1 (Obligatorio)",
+                        label = "Pareja Jugador 1",
                         value = p2Name,
                         onValueChange = { p2Name = it },
                         existingPlayers = players
@@ -1128,7 +1208,7 @@ fun GameSetupScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 PlayerDropdownStateInput(
-                    label = if (isCouplesMode) "Jugador 3 (Obligatorio)" else "Jugador 2 (Obligatorio)",
+                    label = if (isCouplesMode) "Jugador 3" else "Jugador 2",
                     value = p3Name,
                     onValueChange = { p3Name = it },
                     existingPlayers = players
@@ -1136,7 +1216,7 @@ fun GameSetupScreen(
 
                 if (isCouplesMode) {
                     PlayerDropdownStateInput(
-                        label = "Pareja Jugador 3 (Obligatorio)",
+                        label = "Pareja Jugador 3",
                         value = p4Name,
                         onValueChange = { p4Name = it },
                         existingPlayers = players
@@ -1159,44 +1239,39 @@ fun GameSetupScreen(
         // Start Game Button
         Button(
             onClick = {
-                // Validate
-                val isP1Valid = p1Name.isNotBlank()
-                val isP3Valid = p3Name.isNotBlank()
-                val isP2Valid = !isCouplesMode || p2Name.isNotBlank()
-                val isP4Valid = !isCouplesMode || p4Name.isNotBlank()
+                val finalP1Name = p1Name.trim().ifBlank { "Jugador 1" }
+                val finalP2Name = if (isCouplesMode) p2Name.trim().ifBlank { "Jugador 2" } else ""
+                val finalP3Name = if (isCouplesMode) p3Name.trim().ifBlank { "Jugador 3" } else p3Name.trim().ifBlank { "Jugador 2" }
+                val finalP4Name = if (isCouplesMode) p4Name.trim().ifBlank { "Jugador 4" } else ""
 
-                if (!isP1Valid || !isP3Valid || !isP2Valid || !isP4Valid) {
-                    validationError = "Por favor, ingresa todos los nombres requeridos."
+                val nameList = listOfNotNull(
+                    finalP1Name.lowercase(),
+                    finalP2Name.takeIf { isCouplesMode }?.lowercase(),
+                    finalP3Name.lowercase(),
+                    finalP4Name.takeIf { isCouplesMode }?.lowercase()
+                )
+
+                if (nameList.size != nameList.distinct().size) {
+                    validationError = "Los nombres de los jugadores deben ser únicos."
                 } else {
-                    // Unique check
-                    val nameList = listOfNotNull(
-                        p1Name.trim().lowercase(),
-                        p2Name.takeIf { isCouplesMode }?.trim()?.lowercase(),
-                        p3Name.trim().lowercase(),
-                        p4Name.takeIf { isCouplesMode }?.trim()?.lowercase()
+                    validationError = ""
+                    onStartGame(
+                        if (isCouplesMode) "PAREJAS" else "INDIVIDUAL",
+                        targetScore,
+                        team1Name.trim().ifBlank { "Ell@s" },
+                        team2Name.trim().ifBlank { "Nosotr@s" },
+                        finalP1Name,
+                        finalP2Name.takeIf { isCouplesMode },
+                        finalP3Name,
+                        finalP4Name.takeIf { isCouplesMode },
+                        bonusRound1,
+                        bonusRound2,
+                        bonusRound3,
+                        bonusRound4,
+                        bonusCapicu,
+                        bonusChuchazo,
+                        targetScore == 500 && useBonuses
                     )
-                    if (nameList.size != nameList.distinct().size) {
-                        validationError = "Los nombres de los jugadores deben ser únicos."
-                    } else {
-                        validationError = ""
-                        onStartGame(
-                            if (isCouplesMode) "PAREJAS" else "INDIVIDUAL",
-                            targetScore,
-                            team1Name.ifBlank { "Ell@s" },
-                            team2Name.ifBlank { "Nosotr@s" },
-                            p1Name,
-                            p2Name.takeIf { isCouplesMode },
-                            p3Name,
-                            p4Name.takeIf { isCouplesMode },
-                            bonusRound1,
-                            bonusRound2,
-                            bonusRound3,
-                            bonusRound4,
-                            bonusCapicu,
-                            bonusChuchazo,
-                            targetScore == 500 && useBonuses
-                        )
-                    }
                 }
             },
             modifier = Modifier
@@ -1536,7 +1611,7 @@ fun ActiveGameScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Se juega a: ${game.maxPoints} puntos",
+                        text = if (game.maxPoints == 500 && game.useBonuses) "Meta: 500 pts (Bono)" else "Se juega a: ${game.maxPoints} puntos",
                         fontSize = 11.sp,
                         color = Color.Gray,
                         modifier = Modifier.fillMaxWidth(),

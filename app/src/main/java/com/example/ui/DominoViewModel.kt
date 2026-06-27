@@ -84,8 +84,8 @@ class DominoViewModel(private val repository: DominoRepository) : ViewModel() {
             val gid = repository.startNewGame(
                 gameMode = gameMode,
                 maxPoints = maxPoints,
-                team1Name = team1Name.ifBlank { if (gameMode == "PAREJAS") "Ell@s" else p1.name },
-                team2Name = team2Name.ifBlank { if (gameMode == "PAREJAS") "Nosotr@s" else p3.name },
+                team1Name = team1Name.ifBlank { "Ell@s" },
+                team2Name = team2Name.ifBlank { "Nosotr@s" },
                 player1Id = p1.id,
                 player2Id = p2?.id,
                 player3Id = p3.id,
