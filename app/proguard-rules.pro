@@ -1,21 +1,22 @@
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Preserve the line number information for deobfuscation in Play Console
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Keep data models and Room entities intact to prevent schema/query issues
+-keep class com.example.data.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Keep androidx room generated files and annotations
+-keep class androidx.room.** { *; }
+-keep class * extends androidx.room.RoomDatabase
+-keep class * implements androidx.room.RoomDatabase { *; }
+
+# Keep Moshi and Retrofit models if obfuscated
+-keepattributes Signature, *Annotation*, InnerClasses, EnclosingMethod
+
+# Keep Moshi adapter classes
+-keep class *JsonAdapter { *; }
+-keep class com.example.data.**JsonAdapter { *; }

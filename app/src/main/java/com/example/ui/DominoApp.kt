@@ -36,7 +36,11 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -242,6 +246,7 @@ fun DashboardScreen(
 ) {
     var showAddPlayerDialog by remember { mutableStateOf(false) }
     var gameToDeleteId by remember { mutableStateOf<Int?>(null) }
+    var showAllMatches by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier
@@ -489,7 +494,8 @@ fun DashboardScreen(
                 }
             }
         } else {
-            items(completedGames) { game ->
+            val gamesToDisplay = if (showAllMatches) completedGames else completedGames.take(3)
+            items(gamesToDisplay) { game ->
                 var isExpanded by remember { mutableStateOf(false) }
 
                 Card(
@@ -700,6 +706,91 @@ fun DashboardScreen(
                     }
                 }
             }
+            if (completedGames.size > 3) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        TextButton(
+                            onClick = { showAllMatches = !showAllMatches }
+                        ) {
+                            Icon(
+                                imageVector = if (showAllMatches) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = if (showAllMatches) "Mostrar menos" else "Mostrar más",
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Card below Historial de Partidas with generated logo_forcomputer
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            val uriHandler = LocalUriHandler.current
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth(0.85f)
+                        .clickable {
+                            try {
+                                uriHandler.openUri("https://ap0calip.github.io/")
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        },
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                    ),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.logo_forcomputer),
+                            contentDescription = "Logo ap0calip",
+                            modifier = Modifier
+                                .size(90.dp)
+                                .clip(RoundedCornerShape(12.dp)),
+                            contentScale = ContentScale.Fit
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = buildAnnotatedString {
+                                append("Haz clic aquí para ver la información del desarrollador ")
+                                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                    append("ap0calip.")
+                                }
+                            },
+                            fontSize = 13.sp,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.padding(horizontal = 4.dp)
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 
@@ -840,6 +931,31 @@ fun GameSetupScreen(
     var p2Name by remember { mutableStateOf("") } // partner for team 1
     var p3Name by remember { mutableStateOf("") } // opponent 1
     var p4Name by remember { mutableStateOf("") } // partner for team 2
+
+    var selectedHistoryIndex by remember { mutableStateOf(-1) }
+
+    val historicalProfiles = remember(games, players) {
+        games.mapNotNull { game ->
+            val p1 = players.find { it.id == game.player1Id }?.name ?: ""
+            val p2 = game.player2Id?.let { id -> players.find { it.id == id }?.name } ?: ""
+            val p3 = players.find { it.id == game.player3Id }?.name ?: ""
+            val p4 = game.player4Id?.let { id -> players.find { it.id == id }?.name } ?: ""
+            
+            if (p1.isNotBlank() && p3.isNotBlank()) {
+                HistoricalProfile(
+                    team1 = game.team1Name,
+                    team2 = game.team2Name,
+                    p1 = p1,
+                    p2 = p2,
+                    p3 = p3,
+                    p4 = p4,
+                    gameMode = game.gameMode
+                )
+            } else {
+                null
+            }
+        }.distinct()
+    }
 
     LaunchedEffect(games, players) {
         val lastGame = games.firstOrNull()
@@ -1158,16 +1274,119 @@ fun GameSetupScreen(
         // Player Profiles Input
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(
-                    text = "Integrantes de los Equipos",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = "Ingresa nombres. Si no existen, se registrarán automáticamente.",
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "Integrantes de los Equipos",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Text(
+                            text = "Ingresa nombres o carga de historial.",
+                            fontSize = 11.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        IconButton(
+                            onClick = {
+                                if (historicalProfiles.isNotEmpty()) {
+                                    val nextIndex = if (selectedHistoryIndex == -1) {
+                                        0
+                                    } else {
+                                        (selectedHistoryIndex + 1) % historicalProfiles.size
+                                    }
+                                    selectedHistoryIndex = nextIndex
+                                    val profile = historicalProfiles[nextIndex]
+                                    team1Name = profile.team1
+                                    team2Name = profile.team2
+                                    p1Name = profile.p1
+                                    p2Name = profile.p2
+                                    p3Name = profile.p3
+                                    p4Name = profile.p4
+                                    isCouplesMode = (profile.gameMode == "PAREJAS")
+                                }
+                            },
+                            enabled = historicalProfiles.isNotEmpty(),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ChevronLeft,
+                                contentDescription = "Anterior del historial",
+                                tint = if (historicalProfiles.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                team1Name = "Ell@s"
+                                team2Name = "Nosotr@s"
+                                p1Name = ""
+                                p2Name = ""
+                                p3Name = ""
+                                p4Name = ""
+                                selectedHistoryIndex = -1
+                            },
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Refresh,
+                                contentDescription = "Restablecer nombres predefinidos",
+                                tint = MaterialTheme.colorScheme.secondary,
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+
+                        IconButton(
+                            onClick = {
+                                if (historicalProfiles.isNotEmpty()) {
+                                    val nextIndex = if (selectedHistoryIndex == -1 || selectedHistoryIndex == 0) {
+                                        historicalProfiles.size - 1
+                                    } else {
+                                        selectedHistoryIndex - 1
+                                    }
+                                    selectedHistoryIndex = nextIndex
+                                    val profile = historicalProfiles[nextIndex]
+                                    team1Name = profile.team1
+                                    team2Name = profile.team2
+                                    p1Name = profile.p1
+                                    p2Name = profile.p2
+                                    p3Name = profile.p3
+                                    p4Name = profile.p4
+                                    isCouplesMode = (profile.gameMode == "PAREJAS")
+                                }
+                            },
+                            enabled = historicalProfiles.isNotEmpty(),
+                            modifier = Modifier.size(36.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ChevronRight,
+                                contentDescription = "Siguiente del historial",
+                                tint = if (historicalProfiles.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                                modifier = Modifier.size(20.dp)
+                            )
+                        }
+                    }
+                }
+
+                if (selectedHistoryIndex != -1 && historicalProfiles.isNotEmpty()) {
+                    Text(
+                        text = "📂 Cargado: Juego Histórico #${selectedHistoryIndex + 1} (${if (historicalProfiles[selectedHistoryIndex].gameMode == "PAREJAS") "Parejas" else "Individual"})",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -2517,3 +2736,13 @@ fun StatRow(label: String, value: String) {
 fun String.capitalized(): String {
     return this.lowercase().replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 }
+
+data class HistoricalProfile(
+    val team1: String,
+    val team2: String,
+    val p1: String,
+    val p2: String,
+    val p3: String,
+    val p4: String,
+    val gameMode: String
+)

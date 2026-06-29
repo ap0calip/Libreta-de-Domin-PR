@@ -72,6 +72,9 @@ El flujo del usuario se divide mediante navegación declarativa reactiva:
   Permite ingresar los nombres de los 4 jugadores, configurar el puntaje máximo
   meta (ej. 200 o 500 puntos) y alternar el uso de bonos personalizados de
   reglas de Puerto Rico (bono por ganar con Capicú o Chuchazo).
+  Adicionalmente, cuenta con un sistema de restauración rápida de nombres predeterminados
+  y controles de navegación (flechas) para cargar de forma interactiva la configuración de 
+  integrantes y equipos de partidas históricas anteriores.
 
 - Área de Partida Activa (Scoreboard):
   Visualiza de forma prominente la puntuación actual de ambos equipos, de manera
@@ -103,8 +106,9 @@ Colores Base (`Color.kt`):
 ------------------------------------------------------------------------
 5. PARÁMETROS TÉCNICOS Y COMPILACIÓN
 ------------------------------------------------------------------------
-- Target SDK: 36 (Android 15)
+- Target SDK: 36 (Android 15 / 16)
 - Min SDK: 24 (Android 7.0 - Nougat)
+- Versión Actual: Código 16 (Versión 16.0)
 - Sistema de compilación: Gradle Kotlin DSL (build.gradle.kts)
 - Herramienta de compilación complementaria: KSP (Kotlin Symbol Processing)
   para optimizar la generación del código de base de datos Room.
