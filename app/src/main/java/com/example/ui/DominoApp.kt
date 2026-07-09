@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.SpanStyle
+import androidx.activity.compose.BackHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -82,6 +83,10 @@ fun DominoApp(viewModel: DominoViewModel) {
         if (navigationStack.size > 1) {
             navigationStack.removeAt(navigationStack.size - 1)
         }
+    }
+
+    BackHandler(enabled = navigationStack.size > 1) {
+        navigateBack()
     }
 
     // Collecting States
@@ -760,20 +765,20 @@ fun DashboardScreen(
                 ) {
                     Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
+                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.logo_forcomputer),
-                            contentDescription = "Logo ap0calip",
+                            contentDescription = "Logo forcomputer",
                             modifier = Modifier
-                                .size(90.dp)
+                                .fillMaxWidth(0.5f)
+                                .padding(top = 8.dp)
                                 .clip(RoundedCornerShape(12.dp)),
                             contentScale = ContentScale.Fit
                         )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = buildAnnotatedString {
                                 append("Haz clic aquí para ver la información del desarrollador ")
@@ -785,7 +790,7 @@ fun DashboardScreen(
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.onSurface,
                             lineHeight = 18.sp,
-                            modifier = Modifier.padding(horizontal = 4.dp)
+                            modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp)
                         )
                     }
                 }
