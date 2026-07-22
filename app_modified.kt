@@ -4,7 +4,6 @@
 )
 package com.example.ui
 
-import com.example.MainActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -44,7 +43,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.SpanStyle
 import androidx.activity.compose.BackHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -70,408 +68,81 @@ sealed interface Screen {
     object PlayerStats : Screen
 }
 
-@Composable
-fun LanguageSelectionScreen(
-    onLanguageSelected: (String) -> Unit
-) {
-    var selectedLanguage by remember { mutableStateOf<String?>(null) }
-    val scrollState = rememberScrollState()
-    
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-            .safeDrawingPadding(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .widthIn(max = 450.dp)
-                .verticalScroll(scrollState)
-                .padding(horizontal = 24.dp, vertical = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Header
-            Icon(
-                imageVector = Icons.Default.Translate,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(56.dp)
-                    .padding(bottom = 4.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            
-            Text(
-                text = "Selecciona tu idioma\nSelect your language",
-                style = MaterialTheme.typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
-                ),
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            
-            Text(
-                text = "Elige el idioma para usar la aplicación. Puedes cambiarlo en cualquier momento.\n\nChoose the language to use the application. You can change it at any time.",
-                style = MaterialTheme.typography.bodyMedium.copy(
-                    textAlign = TextAlign.Center
-                ),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-            
-            Spacer(modifier = Modifier.height(4.dp))
-            
-            // Spanish Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .clickable { selectedLanguage = "es" }
-                    .testTag("lang_es_card"),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (selectedLanguage == "es") {
-                        MaterialTheme.colorScheme.primaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    }
-                ),
-                border = if (selectedLanguage == "es") {
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-                } else null
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Text(
-                            text = "🇵🇷",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            text = "Español",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = if (selectedLanguage == "es") {
-                                MaterialTheme.colorScheme.onPrimaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            }
-                        )
-                    }
-                    if (selectedLanguage == "es") {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Selected",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            }
-            
-            // English Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .clickable { selectedLanguage = "en" }
-                    .testTag("lang_en_card"),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = if (selectedLanguage == "en") {
-                        MaterialTheme.colorScheme.primaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                    }
-                ),
-                border = if (selectedLanguage == "en") {
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-                } else null
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 20.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Text(
-                            text = "🇺🇸",
-                            style = MaterialTheme.typography.titleLarge
-                        )
-                        Text(
-                            text = "English",
-                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-                            color = if (selectedLanguage == "en") {
-                                MaterialTheme.colorScheme.onPrimaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            }
-                        )
-                    }
-                    if (selectedLanguage == "en") {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Selected",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            // Confirm Button
-            Button(
-                onClick = { selectedLanguage?.let { onLanguageSelected(it) } },
-                enabled = selectedLanguage != null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(52.dp)
-                    .testTag("lang_confirm_button"),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = if (selectedLanguage == "en") "Confirm" else "Aceptar",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DominoApp(viewModel: DominoViewModel) {
-    val context = LocalContext.current
-    val sharedPrefs = remember { context.getSharedPreferences("app_prefs", android.content.Context.MODE_PRIVATE) }
-    var hasSelectedLanguage by remember {
-        mutableStateOf(sharedPrefs.contains("selected_language"))
+    // Custom Navigation Stack
+    val navigationStack = remember { mutableStateListOf<Screen>(Screen.Dashboard) }
+    val currentScreen = navigationStack.lastOrNull() ?: Screen.Dashboard
+
+    val navigateTo: (Screen) -> Unit = { screen ->
+        navigationStack.add(screen)
     }
 
-    if (!hasSelectedLanguage) {
-        LanguageSelectionScreen { lang ->
-            (context as? MainActivity)?.updateLanguage(lang)
-            hasSelectedLanguage = true
+    val navigateBack: () -> Unit = {
+        if (navigationStack.size > 1) {
+            navigationStack.removeAt(navigationStack.size - 1)
         }
-    } else {
-        // Custom Navigation Stack
-        val navigationStack = remember { mutableStateListOf<Screen>(Screen.Dashboard) }
-        val currentScreen = navigationStack.lastOrNull() ?: Screen.Dashboard
+    }
 
-        val navigateTo: (Screen) -> Unit = { screen ->
-            navigationStack.add(screen)
-        }
+    BackHandler(enabled = navigationStack.size > 1) {
+        navigateBack()
+    }
 
-        val navigateBack: () -> Unit = {
-            if (navigationStack.size > 1) {
-                navigationStack.removeAt(navigationStack.size - 1)
-            }
-        }
+    // Collecting States
+    val players by viewModel.allPlayers.collectAsStateWithLifecycle()
+    val games by viewModel.allGames.collectAsStateWithLifecycle()
+    val activeGame by viewModel.activeGame.collectAsStateWithLifecycle()
+    val activeGames by viewModel.activeGames.collectAsStateWithLifecycle()
+    val activeGameRounds by viewModel.activeGameRounds.collectAsStateWithLifecycle()
 
-        BackHandler(enabled = navigationStack.size > 1) {
-            navigateBack()
-        }
-
-        // Collecting States
-        val players by viewModel.allPlayers.collectAsStateWithLifecycle()
-        val games by viewModel.allGames.collectAsStateWithLifecycle()
-        val activeGame by viewModel.activeGame.collectAsStateWithLifecycle()
-        val activeGames by viewModel.activeGames.collectAsStateWithLifecycle()
-        val activeGameRounds by viewModel.activeGameRounds.collectAsStateWithLifecycle()
-
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            topBar = {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = when (currentScreen) {
-                                is Screen.Dashboard -> stringResource(id = R.string.libreta_de_domin_bor)
-                                is Screen.GameSetup -> stringResource(id = R.string.nueva_partida)
-                                is Screen.ActiveGame -> stringResource(id = R.string.marcador_en_vivo)
-                                is Screen.AddRound -> stringResource(id = R.string.anotar_ronda)
-                                is Screen.PlayerStats -> stringResource(id = R.string.estad_sticas_y_l_der)
-                            },
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.SansSerif
-                        )
-                    },
-                    navigationIcon = {
-                        if (currentScreen != Screen.Dashboard) {
-                            IconButton(onClick = { navigateBack() }) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = stringResource(id = R.string.atr_s)
-                                )
-                            }
-                        } else {
-                            Icon(
-                                imageVector = Icons.Default.SportsEsports,
-                                contentDescription = "Logo",
-                                modifier = Modifier.padding(start = 16.dp, end = 8.dp),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
-                    },
-                    actions = {
-                        if (currentScreen == Screen.Dashboard) {
-                            var showMenu by remember { mutableStateOf(false) }
-                            var showLanguageDialog by remember { mutableStateOf(false) }
-
-                            IconButton(onClick = { showMenu = true }) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Menú"
-                                )
-                            }
-
-                            DropdownMenu(
-                                expanded = showMenu,
-                                onDismissRequest = { showMenu = false }
-                            ) {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(stringResource(id = R.string.estad_sticas_y_l_der))
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Default.Leaderboard,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    },
-                                    onClick = {
-                                        showMenu = false
-                                        navigateTo(Screen.PlayerStats)
-                                    }
-                                )
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(stringResource(id = R.string.cambiar_idioma))
-                                    },
-                                    leadingIcon = {
-                                        Icon(
-                                            imageVector = Icons.Default.Translate,
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    },
-                                    onClick = {
-                                        showMenu = false
-                                        showLanguageDialog = true
-                                    }
-                                )
-                            }
-
-                            if (showLanguageDialog) {
-                                AlertDialog(
-                                    onDismissRequest = { showLanguageDialog = false },
-                                    title = {
-                                        Text(
-                                            text = stringResource(id = R.string.selecciona_idioma_titulo),
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    },
-                                    text = {
-                                        Column(
-                                            verticalArrangement = Arrangement.spacedBy(12.dp),
-                                            modifier = Modifier.padding(vertical = 8.dp)
-                                        ) {
-                                            Text(
-                                                text = stringResource(id = R.string.selecciona_idioma_sub),
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                modifier = Modifier.padding(bottom = 8.dp)
-                                            )
-
-                                            // Spanish Option Card
-                                            Card(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(56.dp)
-                                                    .clickable {
-                                                        showLanguageDialog = false
-                                                        (context as? MainActivity)?.updateLanguage("es")
-                                                    },
-                                                shape = RoundedCornerShape(12.dp),
-                                                colors = CardDefaults.cardColors(
-                                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                                                )
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .padding(horizontal = 16.dp),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                                ) {
-                                                    Text("🇵🇷", style = MaterialTheme.typography.titleMedium)
-                                                    Text(
-                                                        text = "Español",
-                                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
-                                                    )
-                                                }
-                                            }
-
-                                            // English Option Card
-                                            Card(
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .height(56.dp)
-                                                    .clickable {
-                                                        showLanguageDialog = false
-                                                        (context as? MainActivity)?.updateLanguage("en")
-                                                    },
-                                                shape = RoundedCornerShape(12.dp),
-                                                colors = CardDefaults.cardColors(
-                                                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
-                                                )
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier
-                                                        .fillMaxSize()
-                                                        .padding(horizontal = 16.dp),
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                                                ) {
-                                                    Text("🇺🇸", style = MaterialTheme.typography.titleMedium)
-                                                    Text(
-                                                        text = "English",
-                                                        style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
-                                                    )
-                                                }
-                                            }
-                                        }
-                                    },
-                                    confirmButton = {
-                                        TextButton(onClick = { showLanguageDialog = false }) {
-                                            Text(text = stringResource(id = R.string.cancelar))
-                                        }
-                                    }
-                                )
-                            }
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = when (currentScreen) {
+                            is Screen.Dashboard -> "Libreta de Dominó Boricua"
+                            is Screen.GameSetup -> "Nueva Partida"
+                            is Screen.ActiveGame -> "Marcador en Vivo"
+                            is Screen.AddRound -> "Anotar Ronda"
+                            is Screen.PlayerStats -> "Estadísticas y Líderes"
+                        },
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily.SansSerif
                     )
+                },
+                navigationIcon = {
+                    if (currentScreen != Screen.Dashboard) {
+                        IconButton(onClick = { navigateBack() }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(id = R.string.atr_s)Atrás
+                        }
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.SportsEsports,
+                            contentDescription = stringResource(id = R.string.logo)Logo
+                            modifier = Modifier.padding(start = 16.dp, end = 8.dp),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                },
+                actions = {
+                    if (currentScreen == Screen.Dashboard) {
+                        IconButton(onClick = { navigateTo(Screen.PlayerStats) }) {
+                            Icon(imageVector = Icons.Default.Leaderboard, contentDescription = stringResource(id = R.string.l_deres)Líderes
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
-            }
-        ) { innerPadding ->
+            )
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -561,7 +232,6 @@ fun DominoApp(viewModel: DominoViewModel) {
             }
         }
     }
-  }
 }
 
 // ==========================================
@@ -601,7 +271,7 @@ fun DashboardScreen(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.bandera_pr),
-                    contentDescription = "Bandera de Puerto Rico",
+                    contentDescription = stringResource(id = R.string.bandera_de_puerto_ri)Bandera de Puerto Rico
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
@@ -614,7 +284,7 @@ fun DashboardScreen(
         if (activeGames.isNotEmpty()) {
             item {
                 Text(
-                    text = if (activeGames.size > 1) stringResource(id = R.string.partidas_en_curso_format, activeGames.size) else stringResource(id = R.string.partida_en_curso),
+                    text = if (activeGames.size > 1) "PARTIDAS EN CURSO (${activeGames.size})" else "PARTIDA EN CURSO",
                     fontWeight = FontWeight.Bold,
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.primary,
@@ -639,19 +309,19 @@ fun DashboardScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     imageVector = Icons.Default.PlayCircle,
-                                    contentDescription = stringResource(id = R.string.activo),
+                                    contentDescription = stringResource(id = R.string.activo)Activo
                                     tint = MaterialTheme.colorScheme.primary
                                 )
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (gameItem.gameMode == "PAREJAS") stringResource(id = R.string.parejas_2v2) else stringResource(id = R.string.individual_1v1),
+                                    text = "${gameItem.gameMode}",
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.primary,
                                     fontSize = 12.sp
                                 )
                             }
                             Text(
-                                text = if (gameItem.maxPoints == 500 && gameItem.useBonuses) stringResource(id = R.string.meta_500_pts_bono) else stringResource(id = R.string.meta_puntos_format, gameItem.maxPoints),
+                                text = if (gameItem.maxPoints == 500 && gameItem.useBonuses) "Meta: 500 pts (Bono)" else "Meta: ${gameItem.maxPoints} pts",
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -675,7 +345,7 @@ fun DashboardScreen(
                                 )
                                 Text(text = "${gameItem.team1Score}", fontSize = 28.sp, fontWeight = FontWeight.Black, maxLines = 1, softWrap = false)
                             }
-                            Text(text = "VS", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 8.dp))
+                            Text(text = stringResource(id = R.string.vs)VS fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(horizontal = 8.dp))
                             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                                 Text(
                                     text = gameItem.team2Name,
@@ -741,7 +411,7 @@ fun DashboardScreen(
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = stringResource(id = R.string.nueva_partida), fontWeight = FontWeight.Bold)
+                Text(text = stringResource(id = R.string.nueva_partida)Nueva Partida fontWeight = FontWeight.Bold)
             }
         }
 
@@ -775,9 +445,9 @@ fun DashboardScreen(
                         }
                         Spacer(modifier = Modifier.width(12.dp))
                         Column {
-                            Text(text = stringResource(id = R.string.ver_r_nking_y_estad_), fontWeight = FontWeight.Bold, fontSize = 15.sp)
+                            Text(text = stringResource(id = R.string.ver_r_nking_y_estad_)Ver Ránking y Estadísticas fontWeight = FontWeight.Bold, fontSize = 15.sp)
                             Text(
-                                text = stringResource(id = R.string.jugadores_registrados_format, players.size),
+                                text = "${players.size} jugadores registrados",
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 12.sp
                             )
@@ -785,7 +455,7 @@ fun DashboardScreen(
                     }
                     Icon(
                         imageVector = Icons.Default.ChevronRight,
-                        contentDescription = stringResource(id = R.string.ver),
+                        contentDescription = stringResource(id = R.string.ver)Ver
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -795,7 +465,7 @@ fun DashboardScreen(
         // Historical games section
         item {
             Text(
-                text = stringResource(id = R.string.historial_de_partido),
+                text = stringResource(id = R.string.historial_de_partido)Historial de Partidos
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 modifier = Modifier.padding(top = 8.dp)
@@ -820,7 +490,7 @@ fun DashboardScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = stringResource(id = R.string.no_hay_partidos_fina),
+                            text = stringResource(id = R.string.no_hay_partidos_fina)No hay partidos finalizados aún.
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontSize = 14.sp
                         )
@@ -853,7 +523,7 @@ fun DashboardScreen(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(
-                                text = stringResource(id = R.string.modo_de_juego) + ": ${if (game.gameMode == "PAREJAS") stringResource(id = R.string.parejas_2v2) else stringResource(id = R.string.individual_1v1)}",
+                                text = "Modo: ${if (game.gameMode == "PAREJAS") "2v2 Parejas" else "1v1 Individual"}",
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.secondary
@@ -886,12 +556,12 @@ fun DashboardScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
                                             imageVector = Icons.Default.EmojiEvents,
-                                            contentDescription = stringResource(id = R.string.ganador),
+                                            contentDescription = stringResource(id = R.string.ganador)Ganador
                                             modifier = Modifier.size(12.dp),
                                             tint = Color(0xFFEAB308)
                                         )
                                         Spacer(modifier = Modifier.width(2.dp))
-                                        Text(text = stringResource(id = R.string.gan), fontSize = 11.sp, color = Color(0xFFEAB308))
+                                        Text(text = stringResource(id = R.string.gan)Ganó fontSize = 11.sp, color = Color(0xFFEAB308))
                                     }
                                 }
                             }
@@ -912,7 +582,7 @@ fun DashboardScreen(
                                     color = if (game.winnerTeamIndex == 1) MaterialTheme.colorScheme.primary else Color.Gray
                                 )
                                 Text(
-                                    text = " - ",
+                                    text = stringResource(id = R.string.string) - 
                                     maxLines = 1,
                                     softWrap = false,
                                     color = Color.LightGray
@@ -943,12 +613,12 @@ fun DashboardScreen(
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         Icon(
                                             imageVector = Icons.Default.EmojiEvents,
-                                            contentDescription = stringResource(id = R.string.ganador),
+                                            contentDescription = stringResource(id = R.string.ganador)Ganador
                                             modifier = Modifier.size(12.dp),
                                             tint = Color(0xFFEAB308)
                                         )
                                         Spacer(modifier = Modifier.width(2.dp))
-                                        Text(text = stringResource(id = R.string.gan), fontSize = 11.sp, color = Color(0xFFEAB308))
+                                        Text(text = stringResource(id = R.string.gan)Ganó fontSize = 11.sp, color = Color(0xFFEAB308))
                                     }
                                 }
                             }
@@ -961,7 +631,7 @@ fun DashboardScreen(
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
-                                text = stringResource(id = R.string.jugadores),
+                                text = stringResource(id = R.string.jugadores)Jugadores:
                                 fontSize = 11.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -1013,7 +683,7 @@ fun DashboardScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.uffff_terrible_chiva),
+                                        text = stringResource(id = R.string.uffff_terrible_chiva)🐐 ¡Uffff, terrible Chiva (partido a cero)! 🐐
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 12.sp,
                                         color = Color(0xFF78350F)
@@ -1033,7 +703,7 @@ fun DashboardScreen(
                                 ) {
                                     Icon(imageVector = Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(text = stringResource(id = R.string.eliminar_de_historia), fontSize = 12.sp)
+                                    Text(text = stringResource(id = R.string.eliminar_de_historia)Eliminar de Historial fontSize = 12.sp)
                                 }
                             }
                         }
@@ -1058,7 +728,7 @@ fun DashboardScreen(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = if (showAllMatches) stringResource(id = R.string.mostrar_menos) else stringResource(id = R.string.mostrar_m_s),
+                                text = if (showAllMatches) "Mostrar menos" else "Mostrar más",
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary
                             )
@@ -1100,7 +770,7 @@ fun DashboardScreen(
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.logo_forcomputer),
-                            contentDescription = stringResource(id = R.string.logo_forcomputer),
+                            contentDescription = stringResource(id = R.string.logo_forcomputer)Logo forcomputer
                             modifier = Modifier
                                 .fillMaxWidth(0.5f)
                                 .padding(top = 8.dp)
@@ -1110,10 +780,9 @@ fun DashboardScreen(
                         Spacer(modifier = Modifier.height(10.dp))
                         Text(
                             text = buildAnnotatedString {
-                                append(stringResource(id = R.string.haz_clic_aqu_para_ve))
-                                append(" ") // Add an explicit space
+                                append("Haz clic aquí para ver la información del desarrollador ")
                                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                    append(stringResource(id = R.string.ap0calip))
+                                    append("ap0calip.")
                                 }
                             },
                             fontSize = 13.sp,
@@ -1131,7 +800,6 @@ fun DashboardScreen(
 
     // New Player Quick Add Dialog
     if (showAddPlayerDialog) {
-        val context = LocalContext.current
         var playerName by remember { mutableStateOf("") }
         var errorMessage by remember { mutableStateOf("") }
 
@@ -1140,11 +808,11 @@ fun DashboardScreen(
                 showAddPlayerDialog = false
                 errorMessage = ""
             },
-            title = { Text(stringResource(id = R.string.registrar_nuevo_juga), fontWeight = FontWeight.Bold) },
+            title = { Text(stringResource(id = R.string.registrar_nuevo_juga)Registrar Nuevo Jugador fontWeight = FontWeight.Bold) },
             text = {
                 Column {
                     Text(
-                        text = stringResource(id = R.string.escribe_el_nombre_de),
+                        text = stringResource(id = R.string.escribe_el_nombre_de)Escribe el nombre del jugador para ingresarlo al sistema:
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -1155,7 +823,7 @@ fun DashboardScreen(
                             playerName = it
                             if (it.isNotBlank()) errorMessage = ""
                         },
-                        label = { Text(stringResource(id = R.string.nombre_del_jugador)) },
+                        label = { Text(stringResource(id = R.string.nombre_del_jugador)Nombre del jugador },
                         isError = errorMessage.isNotBlank(),
                         supportingText = {
                             if (errorMessage.isNotBlank()) Text(text = errorMessage, color = BoricuaRed)
@@ -1171,7 +839,7 @@ fun DashboardScreen(
                 Button(
                     onClick = {
                         if (playerName.isBlank()) {
-                            errorMessage = context.getString(R.string.el_nombre_no_puede_e)
+                            errorMessage = "El nombre no puede estar vacío."
                         } else {
                             viewModel.createPlayer(playerName)
                             showAddPlayerDialog = false
@@ -1180,7 +848,7 @@ fun DashboardScreen(
                         }
                     }
                 ) {
-                    Text(stringResource(id = R.string.registrar))
+                    Text(stringResource(id = R.string.registrar)Registrar
                 }
             },
             dismissButton = {
@@ -1188,7 +856,7 @@ fun DashboardScreen(
                     showAddPlayerDialog = false
                     errorMessage = ""
                 }) {
-                    Text(stringResource(id = R.string.cancelar))
+                    Text(stringResource(id = R.string.cancelar)Cancelar
                 }
             }
         )
@@ -1200,13 +868,13 @@ fun DashboardScreen(
             onDismissRequest = { gameToDeleteId = null },
             title = {
                 Text(
-                    text = "Eliminar Partida",
+                    text = stringResource(id = R.string.eliminar_partida)Eliminar Partida
                     fontWeight = FontWeight.Bold
                 )
             },
             text = {
                 Text(
-                    text = "¿Estás seguro de que deseas eliminar esta partida del historial? Esta acción no se puede deshacer.",
+                    text = stringResource(id = R.string.est_s_seguro_de_que_)¿Estás seguro de que deseas eliminar esta partida del historial? Esta acción no se puede deshacer.
                     fontSize = 14.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1221,14 +889,14 @@ fun DashboardScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = BoricuaRed)
                 ) {
-                    Text("Eliminar")
+                    Text(stringResource(id = R.string.eliminar)Eliminar
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { gameToDeleteId = null }
                 ) {
-                    Text("Cancelar")
+                    Text(stringResource(id = R.string.cancelar)Cancelar
                 }
             }
         )
@@ -1245,7 +913,6 @@ fun GameSetupScreen(
     viewModel: DominoViewModel
 ) {
     val games by viewModel.allGames.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     var isCouplesMode by remember { mutableStateOf(true) } // default is parejas 2v2
     var targetScore by remember { mutableStateOf(200) } // default classic PR is 200
@@ -1260,10 +927,8 @@ fun GameSetupScreen(
     var bonusChuchazo by remember { mutableStateOf(100) }
     var showBonusDialog by remember { mutableStateOf(false) }
 
-    val defaultTeam1 = stringResource(id = R.string.ell_s)
-    val defaultTeam2 = stringResource(id = R.string.nosotr_s)
-    var team1Name by remember(defaultTeam1) { mutableStateOf(defaultTeam1) }
-    var team2Name by remember(defaultTeam2) { mutableStateOf(defaultTeam2) }
+    var team1Name by remember { mutableStateOf("Ell@s") }
+    var team2Name by remember { mutableStateOf("Nosotr@s") }
 
     // Participant names (support autocomplete/dropdown)
     var p1Name by remember { mutableStateOf("") }
@@ -1339,7 +1004,7 @@ fun GameSetupScreen(
             onDismissRequest = { showBonusDialog = false },
             title = {
                 Text(
-                    text = stringResource(id = R.string.ajustes_de_bonificac),
+                    text = stringResource(id = R.string.ajustes_de_bonificac)Ajustes de Bonificación (500 pts)
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
@@ -1350,17 +1015,17 @@ fun GameSetupScreen(
                     modifier = Modifier.verticalScroll(rememberScrollState())
                 ) {
                     Text(
-                        text = stringResource(id = R.string.configura_los_puntos),
+                        text = stringResource(id = R.string.configura_los_puntos)Configura los puntos extra que se otorgarán bajo estas reglas de bonificación.
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    Text(text = stringResource(id = R.string.puntos_por_ronda_gan), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    Text(text = stringResource(id = R.string.puntos_por_ronda_gan)Puntos por Ronda Ganada fontWeight = FontWeight.Bold, fontSize = 13.sp)
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(
                             value = tempRound1,
                             onValueChange = { tempRound1 = it },
-                            label = { Text(stringResource(id = R.string.ronda_1)) },
+                            label = { Text(stringResource(id = R.string.1ra_ronda)1ra Ronda },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f),
                             singleLine = true
@@ -1368,7 +1033,7 @@ fun GameSetupScreen(
                         OutlinedTextField(
                             value = tempRound2,
                             onValueChange = { tempRound2 = it },
-                            label = { Text(stringResource(id = R.string.ronda_2)) },
+                            label = { Text(stringResource(id = R.string.2da_ronda)2da Ronda },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f),
                             singleLine = true
@@ -1378,7 +1043,7 @@ fun GameSetupScreen(
                         OutlinedTextField(
                             value = tempRound3,
                             onValueChange = { tempRound3 = it },
-                            label = { Text(stringResource(id = R.string.ronda_3)) },
+                            label = { Text(stringResource(id = R.string.3ra_ronda)3ra Ronda },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f),
                             singleLine = true
@@ -1386,7 +1051,7 @@ fun GameSetupScreen(
                         OutlinedTextField(
                             value = tempRound4,
                             onValueChange = { tempRound4 = it },
-                            label = { Text(stringResource(id = R.string.ronda_4)) },
+                            label = { Text(stringResource(id = R.string.4ta_ronda)4ta Ronda },
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             modifier = Modifier.weight(1f),
                             singleLine = true
@@ -1394,12 +1059,12 @@ fun GameSetupScreen(
                     }
 
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(text = stringResource(id = R.string.puntos_por_jugadas_e), fontWeight = FontWeight.Bold, fontSize = 13.sp)
+                    Text(text = stringResource(id = R.string.puntos_por_jugadas_e)Puntos por Jugadas Especiales fontWeight = FontWeight.Bold, fontSize = 13.sp)
 
                     OutlinedTextField(
                         value = tempCapicu,
                         onValueChange = { tempCapicu = it },
-                        label = { Text(stringResource(id = R.string.ganar_con_capic)) },
+                        label = { Text(stringResource(id = R.string.ganar_con_capic)Ganar con Capicú },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
@@ -1408,7 +1073,7 @@ fun GameSetupScreen(
                     OutlinedTextField(
                         value = tempChuchazo,
                         onValueChange = { tempChuchazo = it },
-                        label = { Text(stringResource(id = R.string.ganar_con_chuchazo)) },
+                        label = { Text(stringResource(id = R.string.ganar_con_chuchazo)Ganar con Chuchazo },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true
@@ -1425,7 +1090,7 @@ fun GameSetupScreen(
                         },
                         modifier = Modifier.align(Alignment.Start)
                     ) {
-                        Text(stringResource(id = R.string.restablecer_valores_), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary)
+                        Text(stringResource(id = R.string.restablecer_valores_)Restablecer Valores por Defecto fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             },
@@ -1441,12 +1106,12 @@ fun GameSetupScreen(
                         showBonusDialog = false
                     }
                 ) {
-                    Text(stringResource(id = R.string.guardar))
+                    Text(stringResource(id = R.string.guardar)Guardar
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showBonusDialog = false }) {
-                    Text(stringResource(id = R.string.cancelar))
+                    Text(stringResource(id = R.string.cancelar)Cancelar
                 }
             }
         )
@@ -1461,7 +1126,7 @@ fun GameSetupScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.configuraci_n_del_pa),
+            text = stringResource(id = R.string.configuraci_n_del_pa)Configuración del Partido
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -1470,7 +1135,7 @@ fun GameSetupScreen(
         // Game Mode Toggle
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = stringResource(id = R.string.modo_de_juego), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(text = stringResource(id = R.string.modo_de_juego)Modo de Juego fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     val couplesColor = if (isCouplesMode) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -1485,7 +1150,7 @@ fun GameSetupScreen(
                     ) {
                         Icon(imageVector = Icons.Default.Group, contentDescription = null)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(id = R.string.parejas_2v2), fontSize = 12.sp)
+                        Text(stringResource(id = R.string.parejas_2v2)Parejas (2v2) fontSize = 12.sp)
                     }
 
                     val indColor = if (!isCouplesMode) ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
@@ -1500,7 +1165,7 @@ fun GameSetupScreen(
                     ) {
                         Icon(imageVector = Icons.Default.Person, contentDescription = null)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(id = R.string.individual_1v1), fontSize = 12.sp)
+                        Text(stringResource(id = R.string.individual_1v1)Individual (1v1) fontSize = 12.sp)
                     }
                 }
             }
@@ -1509,9 +1174,9 @@ fun GameSetupScreen(
         // Score limit Selection
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = stringResource(id = R.string.puntuaci_n_de_victor), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(text = stringResource(id = R.string.puntuaci_n_de_victor)Puntuación de Victoria (Meta) fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Text(
-                    text = stringResource(id = R.string.selecciona_jugar_par),
+                    text = stringResource(id = R.string.selecciona_jugar_par)Selecciona jugar partida rápida clásica (200 pts) o con bonificación (500 pts).
                     fontSize = 11.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -1526,7 +1191,7 @@ fun GameSetupScreen(
                         FilterChip(
                             selected = isSel,
                             onClick = { targetScore = limit },
-                            label = { Text(stringResource(id = R.string.puntos_format, limit), modifier = Modifier.padding(horizontal = 8.dp)) },
+                            label = { Text("$limit pts", modifier = Modifier.padding(horizontal = 8.dp)) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -1545,13 +1210,13 @@ fun GameSetupScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = stringResource(id = R.string.bonificaciones_activ),
+                                text = stringResource(id = R.string.bonificaciones_activ)🏆 Bonificaciones Activas
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 14.sp,
                                 color = MaterialTheme.colorScheme.primary
                             )
                             Text(
-                                text = stringResource(id = R.string.se_otorgan_puntos_ex),
+                                text = stringResource(id = R.string.se_otorgan_puntos_ex)Se otorgan puntos extra automáticos
                                 fontSize = 11.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -1569,7 +1234,7 @@ fun GameSetupScreen(
                         Spacer(modifier = Modifier.height(12.dp))
 
                         Text(
-                            text = stringResource(id = R.string.valores_de_bonificac),
+                            text = stringResource(id = R.string.valores_de_bonificac)Valores de Bonificación Actuales:
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurface
@@ -1581,14 +1246,14 @@ fun GameSetupScreen(
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(id = R.string.ronda_1_bonus_format, bonusRound1), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(text = stringResource(id = R.string.ronda_2_bonus_format, bonusRound2), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(text = stringResource(id = R.string.ronda_3_bonus_format, bonusRound3), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(text = "• Ronda 1: +$bonusRound1 pts", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(text = "• Ronda 2: +$bonusRound2 pts", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(text = "• Ronda 3: +$bonusRound3 pts", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(id = R.string.ronda_4_bonus_format, bonusRound4), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(text = stringResource(id = R.string.capicu_bonus_format, bonusCapicu), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                Text(text = stringResource(id = R.string.chuchazo_bonus_format, bonusChuchazo), fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(text = "• Ronda 4: +$bonusRound4 pts", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(text = "• Capicú: +$bonusCapicu pts", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                Text(text = "• Chuchazo: +$bonusChuchazo pts", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         }
 
@@ -1603,7 +1268,7 @@ fun GameSetupScreen(
                         ) {
                             Icon(imageVector = Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(16.dp))
                             Spacer(modifier = Modifier.width(6.dp))
-                            Text(stringResource(id = R.string.configurar_bonificac), fontSize = 12.sp)
+                            Text(stringResource(id = R.string.configurar_bonificac)Configurar Bonificaciones fontSize = 12.sp)
                         }
                     }
                 }
@@ -1620,12 +1285,12 @@ fun GameSetupScreen(
                 ) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = stringResource(id = R.string.integrantes_de_los_e),
+                            text = stringResource(id = R.string.integrantes_de_los_e)Integrantes de los Equipos
                             fontWeight = FontWeight.Bold,
                             fontSize = 14.sp
                         )
                         Text(
-                            text = stringResource(id = R.string.ingresa_nombres_o_ca),
+                            text = stringResource(id = R.string.ingresa_nombres_o_ca)Ingresa nombres o carga de historial.
                             fontSize = 11.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1659,7 +1324,7 @@ fun GameSetupScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ChevronLeft,
-                                contentDescription = stringResource(id = R.string.anterior_del_histori),
+                                contentDescription = stringResource(id = R.string.anterior_del_histori)Anterior del historial
                                 tint = if (historicalProfiles.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -1667,8 +1332,8 @@ fun GameSetupScreen(
 
                         IconButton(
                             onClick = {
-                                team1Name = defaultTeam1
-                                team2Name = defaultTeam2
+                                team1Name = "Ell@s"
+                                team2Name = "Nosotr@s"
                                 p1Name = ""
                                 p2Name = ""
                                 p3Name = ""
@@ -1679,7 +1344,7 @@ fun GameSetupScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
-                                contentDescription = stringResource(id = R.string.restablecer_nombres_),
+                                contentDescription = stringResource(id = R.string.restablecer_nombres_)Restablecer nombres predefinidos
                                 tint = MaterialTheme.colorScheme.secondary,
                                 modifier = Modifier.size(20.dp)
                             )
@@ -1709,7 +1374,7 @@ fun GameSetupScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ChevronRight,
-                                contentDescription = stringResource(id = R.string.siguiente_del_histor),
+                                contentDescription = stringResource(id = R.string.siguiente_del_histor)Siguiente del historial
                                 tint = if (historicalProfiles.isNotEmpty()) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
                                 modifier = Modifier.size(20.dp)
                             )
@@ -1719,7 +1384,7 @@ fun GameSetupScreen(
 
                 if (selectedHistoryIndex != -1 && historicalProfiles.isNotEmpty()) {
                     Text(
-                        text = stringResource(id = R.string.cargado_juego_historico) + " #${selectedHistoryIndex + 1} (${if (historicalProfiles[selectedHistoryIndex].gameMode == "PAREJAS") stringResource(id = R.string.parejas_2v2) else stringResource(id = R.string.individual_1v1)})",
+                        text = "📂 Cargado: Juego Histórico #${selectedHistoryIndex + 1} (${if (historicalProfiles[selectedHistoryIndex].gameMode == "PAREJAS") "Parejas" else "Individual"})",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.primary,
@@ -1733,13 +1398,13 @@ fun GameSetupScreen(
                 OutlinedTextField(
                     value = team1Name,
                     onValueChange = { team1Name = it },
-                    label = { Text(stringResource(id = R.string.equipo_1_nombre)) },
-                    placeholder = { Text(stringResource(id = R.string.ell_s)) },
+                    label = { Text(stringResource(id = R.string.equipo_1_nombre)Equipo 1 (Nombre) },
+                    placeholder = { Text(stringResource(id = R.string.ell_s)Ell@s },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 PlayerDropdownStateInput(
-                    label = stringResource(id = R.string.jugador_1),
+                    label = "Jugador 1",
                     value = p1Name,
                     onValueChange = { p1Name = it },
                     existingPlayers = players
@@ -1747,7 +1412,7 @@ fun GameSetupScreen(
 
                 if (isCouplesMode) {
                     PlayerDropdownStateInput(
-                        label = stringResource(id = R.string.pareja_jugador_1),
+                        label = "Pareja Jugador 1",
                         value = p2Name,
                         onValueChange = { p2Name = it },
                         existingPlayers = players
@@ -1760,13 +1425,13 @@ fun GameSetupScreen(
                 OutlinedTextField(
                     value = team2Name,
                     onValueChange = { team2Name = it },
-                    label = { Text(stringResource(id = R.string.equipo_2_nombre)) },
-                    placeholder = { Text(stringResource(id = R.string.nosotr_s)) },
+                    label = { Text(stringResource(id = R.string.equipo_2_nombre)Equipo 2 (Nombre) },
+                    placeholder = { Text(stringResource(id = R.string.nosotr_s)Nosotr@s },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 PlayerDropdownStateInput(
-                    label = if (isCouplesMode) stringResource(id = R.string.jugador_3) else stringResource(id = R.string.jugador_2),
+                    label = if (isCouplesMode) "Jugador 3" else "Jugador 2",
                     value = p3Name,
                     onValueChange = { p3Name = it },
                     existingPlayers = players
@@ -1774,7 +1439,7 @@ fun GameSetupScreen(
 
                 if (isCouplesMode) {
                     PlayerDropdownStateInput(
-                        label = stringResource(id = R.string.pareja_jugador_3),
+                        label = "Pareja Jugador 3",
                         value = p4Name,
                         onValueChange = { p4Name = it },
                         existingPlayers = players
@@ -1797,10 +1462,10 @@ fun GameSetupScreen(
         // Start Game Button
         Button(
             onClick = {
-                val finalP1Name = p1Name.trim().ifBlank { context.getString(R.string.jugador_1) }
-                val finalP2Name = if (isCouplesMode) p2Name.trim().ifBlank { context.getString(R.string.jugador_2) } else ""
-                val finalP3Name = if (isCouplesMode) p3Name.trim().ifBlank { context.getString(R.string.jugador_3) } else p3Name.trim().ifBlank { context.getString(R.string.jugador_2) }
-                val finalP4Name = if (isCouplesMode) p4Name.trim().ifBlank { context.getString(R.string.jugador_4) } else ""
+                val finalP1Name = p1Name.trim().ifBlank { "Jugador 1" }
+                val finalP2Name = if (isCouplesMode) p2Name.trim().ifBlank { "Jugador 2" } else ""
+                val finalP3Name = if (isCouplesMode) p3Name.trim().ifBlank { "Jugador 3" } else p3Name.trim().ifBlank { "Jugador 2" }
+                val finalP4Name = if (isCouplesMode) p4Name.trim().ifBlank { "Jugador 4" } else ""
 
                 val nameList = listOfNotNull(
                     finalP1Name.lowercase(),
@@ -1810,14 +1475,14 @@ fun GameSetupScreen(
                 )
 
                 if (nameList.size != nameList.distinct().size) {
-                    validationError = context.getString(R.string.los_nombres_de_los_j)
+                    validationError = "Los nombres de los jugadores deben ser únicos."
                 } else {
                     validationError = ""
                     onStartGame(
                         if (isCouplesMode) "PAREJAS" else "INDIVIDUAL",
                         targetScore,
-                        team1Name.trim().ifBlank { context.getString(R.string.ell_s) },
-                        team2Name.trim().ifBlank { context.getString(R.string.nosotr_s) },
+                        team1Name.trim().ifBlank { "Ell@s" },
+                        team2Name.trim().ifBlank { "Nosotr@s" },
                         finalP1Name,
                         finalP2Name.takeIf { isCouplesMode },
                         finalP3Name,
@@ -1839,7 +1504,7 @@ fun GameSetupScreen(
         ) {
             Icon(imageVector = Icons.Default.SportsEsports, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(text = stringResource(id = R.string.iniciar_partido), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(text = stringResource(id = R.string.iniciar_partido)¡Iniciar Partido! fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -1867,7 +1532,7 @@ fun PlayerDropdownStateInput(
             singleLine = true,
             trailingIcon = {
                 IconButton(onClick = { isExpanded = !isExpanded }) {
-                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = stringResource(id = R.string.sugerencias))
+                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = stringResource(id = R.string.sugerencias)Sugerencias
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -1947,7 +1612,7 @@ fun ActiveGameScreen(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.EmojiEvents,
-                                contentDescription = stringResource(id = R.string.campe_n),
+                                contentDescription = stringResource(id = R.string.campe_n)Campeón
                                 modifier = Modifier.size(40.dp),
                                 tint = Color(0xFFCA8A04)
                             )
@@ -1956,7 +1621,7 @@ fun ActiveGameScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = stringResource(id = R.string.fin_del_partido),
+                            text = stringResource(id = R.string.fin_del_partido)¡FIN DEL PARTIDO!
                             fontWeight = FontWeight.Black,
                             fontSize = 24.sp,
                             color = Color(0xFF78350F)
@@ -1966,7 +1631,7 @@ fun ActiveGameScreen(
 
                         val winningTeamName = if (game.winnerTeamIndex == 1) game.team1Name else game.team2Name
                         Text(
-                            text = stringResource(id = R.string.winning_team_format, winningTeamName),
+                            text = "🏆 $winningTeamName 🏆",
                             fontWeight = FontWeight.Bold,
                             fontSize = 20.sp,
                             textAlign = TextAlign.Center,
@@ -1974,9 +1639,9 @@ fun ActiveGameScreen(
                         )
 
                         val winningPlayers = if (game.winnerTeamIndex == 1) {
-                            "${viewModel.getPlayerName(game.player1Id)}" + (if (game.player2Id != null) "${stringResource(id = R.string.y_conjunction)}${viewModel.getPlayerName(game.player2Id)}" else "")
+                            "${viewModel.getPlayerName(game.player1Id)}" + (if (game.player2Id != null) " y ${viewModel.getPlayerName(game.player2Id)}" else "")
                         } else {
-                            "${viewModel.getPlayerName(game.player3Id)}" + (if (game.player4Id != null) "${stringResource(id = R.string.y_conjunction)}${viewModel.getPlayerName(game.player4Id)}" else "")
+                            "${viewModel.getPlayerName(game.player3Id)}" + (if (game.player4Id != null) " y ${viewModel.getPlayerName(game.player4Id)}" else "")
                         }
                         Text(
                             text = winningPlayers,
@@ -1989,7 +1654,7 @@ fun ActiveGameScreen(
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = stringResource(id = R.string.marcador_final_format, game.team1Score, game.team2Score),
+                            text = "Marcador Final: ${game.team1Score} - ${game.team2Score}",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.DarkGray
@@ -2009,7 +1674,7 @@ fun ActiveGameScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.una_chiva_legendaria),
+                                        text = stringResource(id = R.string.una_chiva_legendaria)🐐 ¡UNA CHIVA LEGENDARIA! (200 - 0) 🐐
                                         color = Color.White,
                                         fontWeight = FontWeight.Black,
                                         fontSize = 13.sp
@@ -2024,7 +1689,7 @@ fun ActiveGameScreen(
                             onClick = onFinishGame,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(stringResource(id = R.string.volver_al_dashboard))
+                            Text(stringResource(id = R.string.volver_al_dashboard)Volver al Dashboard
                         }
                     }
                 }
@@ -2050,7 +1715,7 @@ fun ActiveGameScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = stringResource(id = R.string.marcador),
+                        text = stringResource(id = R.string.marcador)MARCADOR
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         color = Color.Gray
@@ -2097,7 +1762,7 @@ fun ActiveGameScreen(
                             )
                             Text(
                                 text = "${viewModel.getPlayerName(game.player1Id)}" +
-                                        (if (game.player2Id != null) "${stringResource(id = R.string.y_conjunction)}${viewModel.getPlayerName(game.player2Id)}" else ""),
+                                        (if (game.player2Id != null) " y ${viewModel.getPlayerName(game.player2Id)}" else ""),
                                 fontSize = 11.sp,
                                 color = Color.Gray,
                                 maxLines = 2,
@@ -2109,7 +1774,7 @@ fun ActiveGameScreen(
                         // Divider VS
                         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(0.4f)) {
                             Text(
-                                text = stringResource(id = R.string.vs),
+                                text = stringResource(id = R.string.vs)vs
                                 fontWeight = FontWeight.Black,
                                 fontSize = 16.sp,
                                 color = Color.Gray
@@ -2156,7 +1821,7 @@ fun ActiveGameScreen(
                             )
                             Text(
                                 text = "${viewModel.getPlayerName(game.player3Id)}" +
-                                        (if (game.player4Id != null) "${stringResource(id = R.string.y_conjunction)}${viewModel.getPlayerName(game.player4Id)}" else ""),
+                                        (if (game.player4Id != null) " y ${viewModel.getPlayerName(game.player4Id)}" else ""),
                                 fontSize = 11.sp,
                                 color = Color.Gray,
                                 maxLines = 2,
@@ -2169,7 +1834,7 @@ fun ActiveGameScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = if (game.maxPoints == 500 && game.useBonuses) stringResource(id = R.string.meta_500_pts_bono) else stringResource(id = R.string.se_juega_a_format, game.maxPoints),
+                        text = if (game.maxPoints == 500 && game.useBonuses) "Meta: 500 pts (Bono)" else "Se juega a: ${game.maxPoints} puntos",
                         fontSize = 11.sp,
                         color = Color.Gray,
                         modifier = Modifier.fillMaxWidth(),
@@ -2197,7 +1862,7 @@ fun ActiveGameScreen(
                     ) {
                         Icon(imageVector = Icons.Default.Calculate, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text(stringResource(id = R.string.anotar_ronda), fontWeight = FontWeight.ExtraBold, fontSize = 15.sp)
+                        Text(stringResource(id = R.string.anotar_ronda)Anotar Ronda fontWeight = FontWeight.ExtraBold, fontSize = 15.sp)
                     }
 
                     // Undo Button
@@ -2212,7 +1877,7 @@ fun ActiveGameScreen(
                         ) {
                             Icon(imageVector = Icons.Default.Undo, contentDescription = null)
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(stringResource(id = R.string.deshacer), fontSize = 12.sp)
+                            Text(stringResource(id = R.string.deshacer)Deshacer fontSize = 12.sp)
                         }
                     }
                 }
@@ -2222,7 +1887,7 @@ fun ActiveGameScreen(
         // Round history section
         item {
             Text(
-                text = stringResource(id = R.string.registro_de_rondas),
+                text = stringResource(id = R.string.registro_de_rondas_m)Registro de Rondas / Manos
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp
             )
@@ -2238,7 +1903,7 @@ fun ActiveGameScreen(
                 ) {
                     Box(modifier = Modifier.padding(24.dp), contentAlignment = Alignment.Center) {
                         Text(
-                            text = stringResource(id = R.string.a_n_no_hay_rondas_an),
+                            text = stringResource(id = R.string.a_n_no_hay_rondas_an)Aún no hay rondas anotadas en esta partida. ¡Empieza tirando la chiva!
                             fontSize = 13.sp,
                             textAlign = TextAlign.Center,
                             color = Color.Gray
@@ -2283,7 +1948,7 @@ fun ActiveGameScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.m_round_format, round.roundNumber),
+                                        text = "M${round.roundNumber}",
                                         fontWeight = FontWeight.Black,
                                         fontSize = 13.sp,
                                         color = winColor
@@ -2304,7 +1969,7 @@ fun ActiveGameScreen(
                                     textAlign = if (isTeam1) TextAlign.Start else TextAlign.End
                                 )
                                 Text(
-                                    text = stringResource(id = R.string.puntos_format, round.points),
+                                    text = "${round.points} pts",
                                     fontWeight = FontWeight.Black,
                                     fontSize = 18.sp,
                                     color = winColor,
@@ -2315,8 +1980,8 @@ fun ActiveGameScreen(
                                 if (round.winType != "DOMINACION" && !round.winType.equals("Dominación", ignoreCase = true)) {
                                     detailsList.add(round.winType.capitalized())
                                 }
-                                if (round.isCapicu) detailsList.add(stringResource(id = R.string.capic))
-                                if (round.isChuchazo) detailsList.add(stringResource(id = R.string.chuchazo))
+                                if (round.isCapicu) detailsList.add("Capicú")
+                                if (round.isChuchazo) detailsList.add("Chuchazo")
 
                                 val extraNotes = round.notes?.trim()
                                 if (!extraNotes.isNullOrBlank() && !extraNotes.equals("Dominación", ignoreCase = true) && !extraNotes.equals("DOMINACION", ignoreCase = true)) {
@@ -2333,7 +1998,7 @@ fun ActiveGameScreen(
                                 }
                                 if (round.bonusPoints > 0) {
                                     Text(
-                                        text = stringResource(id = R.string.base_bono_format, round.basePoints, round.bonusPoints),
+                                        text = "${round.basePoints} base | ${round.bonusPoints} bono",
                                         fontSize = 10.sp,
                                         color = Color.Gray,
                                         fontWeight = FontWeight.SemiBold,
@@ -2351,7 +2016,7 @@ fun ActiveGameScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.m_round_format, round.roundNumber),
+                                        text = "M${round.roundNumber}",
                                         fontWeight = FontWeight.Black,
                                         fontSize = 13.sp,
                                         color = winColor
@@ -2379,7 +2044,7 @@ fun ActiveGameScreen(
                 ) {
                     Icon(imageVector = Icons.Default.Cancel, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(stringResource(id = R.string.cancelar_y_salir_de_))
+                    Text(stringResource(id = R.string.cancelar_y_salir_de_)Cancelar y salir de la partida
                 }
             }
         }
@@ -2388,11 +2053,10 @@ fun ActiveGameScreen(
     if (showCancelDialog) {
         AlertDialog(
             onDismissRequest = { showCancelDialog = false },
-            title = { Text(stringResource(id = R.string.cancelar_partida_act)) },
+            title = { Text(stringResource(id = R.string.cancelar_partida_act)¿Cancelar partida actual? },
             text = {
                 Text(
-                    stringResource(id = R.string.esta_acci_n_cancelar)
-                )
+                    stringResource(id = R.string.esta_acci_n_cancelar)Esta acción cancelará la sesión activa del juego y guardará como cancelada en el historial. No se actualizarán récords finales.
             },
             confirmButton = {
                 Button(
@@ -2402,12 +2066,12 @@ fun ActiveGameScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = BoricuaRed)
                 ) {
-                    Text(stringResource(id = R.string.s_cancelar))
+                    Text(stringResource(id = R.string.s_cancelar)Sí, Cancelar
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showCancelDialog = false }) {
-                    Text(stringResource(id = R.string.no_seguir_jugando))
+                    Text(stringResource(id = R.string.no_seguir_jugando)No, Seguir Jugando
                 }
             }
         )
@@ -2416,11 +2080,10 @@ fun ActiveGameScreen(
     if (showUndoDialog) {
         AlertDialog(
             onDismissRequest = { showUndoDialog = false },
-            title = { Text(stringResource(id = R.string.deshacer_ltima_ronda)) },
+            title = { Text(stringResource(id = R.string.deshacer_ltima_ronda)¿Deshacer última ronda? },
             text = {
                 Text(
-                    stringResource(id = R.string.est_s_seguro_de_que__6)
-                )
+                    stringResource(id = R.string.est_s_seguro_de_que_)¿Estás seguro de que deseas eliminar la última ronda anotada? Esta acción no se puede deshacer.
             },
             confirmButton = {
                 Button(
@@ -2430,12 +2093,12 @@ fun ActiveGameScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = BoricuaRed)
                 ) {
-                    Text(stringResource(id = R.string.s_deshacer))
+                    Text(stringResource(id = R.string.s_deshacer)Sí, Deshacer
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showUndoDialog = false }) {
-                    Text(stringResource(id = R.string.cancelar))
+                    Text(stringResource(id = R.string.cancelar)Cancelar
                 }
             }
         )
@@ -2481,12 +2144,11 @@ fun AddRoundScreen(
         focusRequester.requestFocus()
     }
 
-    val context = LocalContext.current
     val handleSaveRound = {
         if (pointsScored <= 0) {
-            validationError = context.getString(R.string.por_favor_ingresa_un)
+            validationError = "Por favor ingresa un puntaje válido para la mano."
         } else if (pointsScored > 180) {
-            validationError = context.getString(R.string.el_puntaje_es_inusit)
+            validationError = "El puntaje es inusitadamente alto para una sola mano (máx 168)."
         } else {
             validationError = ""
             onSaveRound(selectedWinnerIndex, "DOMINACION", pointsScored, "Dominación", isCapicu, isChuchazo)
@@ -2502,7 +2164,7 @@ fun AddRoundScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = stringResource(id = R.string.guardar_resultados_d),
+            text = stringResource(id = R.string.guardar_resultados_d)Guardar Resultados de Mano
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
@@ -2511,7 +2173,7 @@ fun AddRoundScreen(
         // 1. Who Won?
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = stringResource(id = R.string.qui_n_gan_la_mano), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(text = stringResource(id = R.string.qui_n_gan_la_mano)¿Quién ganó la mano? fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.fillMaxWidth()) {
                     val team1Color = when {
@@ -2558,7 +2220,7 @@ fun AddRoundScreen(
         if (game.useBonuses) {
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = stringResource(id = R.string.bonificaciones_espec), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = stringResource(id = R.string.bonificaciones_espec)Bonificaciones Especiales fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Row(
@@ -2572,8 +2234,8 @@ fun AddRoundScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Column {
-                            Text(text = stringResource(id = R.string.capicu_plus_format, game.bonusCapicu), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                            Text(text = stringResource(id = R.string.ganar_por_ambos_lado), fontSize = 11.sp, color = Color.Gray)
+                            Text(text = "Capicú (+${game.bonusCapicu} pts)", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(text = stringResource(id = R.string.ganar_por_ambos_lado)Ganar por ambos lados abiertos fontSize = 11.sp, color = Color.Gray)
                         }
                     }
 
@@ -2590,8 +2252,8 @@ fun AddRoundScreen(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Column {
-                            Text(text = stringResource(id = R.string.chuchazo_plus_format, game.bonusChuchazo), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                            Text(text = stringResource(id = R.string.ganar_cerrando_con_e), fontSize = 11.sp, color = Color.Gray)
+                            Text(text = "Chuchazo (+${game.bonusChuchazo} pts)", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                            Text(text = stringResource(id = R.string.ganar_cerrando_con_e)Ganar cerrando con el doble seis fontSize = 11.sp, color = Color.Gray)
                         }
                     }
                 }
@@ -2601,7 +2263,7 @@ fun AddRoundScreen(
         // 3. Score Input Field (Puntos Regulares) - Now below Bonuses
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text(text = stringResource(id = R.string.puntos_regulares), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                Text(text = stringResource(id = R.string.puntos_regulares)Puntos Regulares fontWeight = FontWeight.Bold, fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(12.dp))
                 OutlinedTextField(
                     value = pointsInputText,
@@ -2610,7 +2272,7 @@ fun AddRoundScreen(
                             pointsInputText = newValue
                         }
                     },
-                    label = { Text(stringResource(id = R.string.puntos_anotados_en_l)) },
+                    label = { Text(stringResource(id = R.string.puntos_anotados_en_l)Puntos anotados en la mano },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number,
                         imeAction = ImeAction.Done
@@ -2650,7 +2312,7 @@ fun AddRoundScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = stringResource(id = R.string.desglose_puntos_format, winnerTeamName),
+                    text = "📊 Desglose de Puntos para $winnerTeamName",
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
                     color = Color.Gray
@@ -2661,8 +2323,8 @@ fun AddRoundScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = stringResource(id = R.string.puntos_base_mano), fontSize = 12.sp)
-                    Text(text = stringResource(id = R.string.puntos_format, pointsScored), fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
+                    Text(text = stringResource(id = R.string.puntos_base_mano)Puntos base (mano): fontSize = 12.sp)
+                    Text(text = "$pointsScored pts", fontWeight = FontWeight.SemiBold, fontSize = 12.sp)
                 }
 
                 if (game.useBonuses) {
@@ -2671,8 +2333,8 @@ fun AddRoundScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = stringResource(id = R.string.bonificacion_ronda_format, nextRoundNum), fontSize = 12.sp, color = BoricuaBlue)
-                            Text(text = stringResource(id = R.string.plus_puntos_format, roundBonusAmount), fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = BoricuaBlue)
+                            Text(text = "Bonificación de Ronda $nextRoundNum:", fontSize = 12.sp, color = BoricuaBlue)
+                            Text(text = "+$roundBonusAmount pts", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = BoricuaBlue)
                         }
                     }
                     if (capicuBonusAmount > 0) {
@@ -2680,8 +2342,8 @@ fun AddRoundScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = stringResource(id = R.string.bonificaci_n_por_cap), fontSize = 12.sp, color = BoricuaBlue)
-                            Text(text = stringResource(id = R.string.plus_puntos_format, capicuBonusAmount), fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = BoricuaBlue)
+                            Text(text = stringResource(id = R.string.bonificaci_n_por_cap)Bonificación por Capicú: fontSize = 12.sp, color = BoricuaBlue)
+                            Text(text = "+$capicuBonusAmount pts", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = BoricuaBlue)
                         }
                     }
                     if (chuchazoBonusAmount > 0) {
@@ -2689,8 +2351,8 @@ fun AddRoundScreen(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(text = stringResource(id = R.string.bonificaci_n_por_chu), fontSize = 12.sp, color = BoricuaBlue)
-                            Text(text = stringResource(id = R.string.plus_puntos_format, chuchazoBonusAmount), fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = BoricuaBlue)
+                            Text(text = stringResource(id = R.string.bonificaci_n_por_chu)Bonificación por Chuchazo: fontSize = 12.sp, color = BoricuaBlue)
+                            Text(text = "+$chuchazoBonusAmount pts", fontWeight = FontWeight.SemiBold, fontSize = 12.sp, color = BoricuaBlue)
                         }
                     }
                 }
@@ -2704,9 +2366,9 @@ fun AddRoundScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = stringResource(id = R.string.total_para_esta_mano), fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Text(text = stringResource(id = R.string.total_para_esta_mano)Total para esta mano: fontWeight = FontWeight.Bold, fontSize = 14.sp)
                     Text(
-                        text = stringResource(id = R.string.puntos_format, totalManoScore),
+                        text = "$totalManoScore pts",
                         fontWeight = FontWeight.Black,
                         fontSize = 18.sp,
                         color = MaterialTheme.colorScheme.primary
@@ -2737,7 +2399,7 @@ fun AddRoundScreen(
         ) {
             Icon(imageVector = Icons.Default.Check, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text(stringResource(id = R.string.guardar_mano), fontSize = 16.sp, fontWeight = FontWeight.Bold)
+            Text(stringResource(id = R.string.guardar_mano)Guardar Mano fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -2751,7 +2413,6 @@ fun PlayerStatsScreen(
     onCreatePlayer: (String) -> Unit,
     onDeletePlayer: (Player) -> Unit
 ) {
-    val context = LocalContext.current
     var query by remember { mutableStateOf("") }
     var sortByGamesWon by remember { mutableStateOf(true) } // true: gamesWon, false: winRatio
 
@@ -2783,7 +2444,7 @@ fun PlayerStatsScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = stringResource(id = R.string.l_deres_de_la_traba),
+                text = stringResource(id = R.string.l_deres_de_la_traba)Líderes de la Traba 🇵🇷
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary
@@ -2792,7 +2453,7 @@ fun PlayerStatsScreen(
             Button(onClick = { showAddPlayerDialog = true }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(stringResource(id = R.string.nuevo))
+                Text(stringResource(id = R.string.nuevo)Nuevo
             }
         }
 
@@ -2800,7 +2461,7 @@ fun PlayerStatsScreen(
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
-            placeholder = { Text(stringResource(id = R.string.buscar_jugador)) },
+            placeholder = { Text(stringResource(id = R.string.buscar_jugador)Buscar jugador... },
             leadingIcon = { Icon(imageVector = Icons.Default.Search, contentDescription = null) },
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
@@ -2817,12 +2478,12 @@ fun PlayerStatsScreen(
                 FilterChip(
                     selected = sortByGamesWon,
                     onClick = { sortByGamesWon = true },
-                    label = { Text(stringResource(id = R.string.partidos_ganados)) }
+                    label = { Text(stringResource(id = R.string.partidos_ganados)Partidos Ganados }
                 )
                 FilterChip(
                     selected = !sortByGamesWon,
                     onClick = { sortByGamesWon = false },
-                    label = { Text(stringResource(id = R.string.porcentaje_de_victoria)) }
+                    label = { Text(stringResource(id = R.string.de_victoria)% de Victoria }
                 )
             }
         }
@@ -2844,7 +2505,7 @@ fun PlayerStatsScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
                     Text(
-                        text = stringResource(id = R.string.ning_n_jugador_coinc),
+                        text = stringResource(id = R.string.ning_n_jugador_coinc)Ningún jugador coincide.
                         color = Color.Gray,
                         fontWeight = FontWeight.Bold
                     )
@@ -2910,7 +2571,7 @@ fun PlayerStatsScreen(
                                 )
                                 val ratio = if (player.gamesPlayed == 0) 0f else (player.gamesWon.toFloat() / player.gamesPlayed.toFloat() * 100)
                                 Text(
-                                    text = stringResource(id = R.string.racha_format, player.gamesWon, player.gamesPlayed - player.gamesWon, String.format("%.1f", ratio)),
+                                    text = "Racha: ${player.gamesWon}V - ${player.gamesPlayed - player.gamesWon}D  |  ${String.format("%.1f", ratio)}% Vic",
                                     fontSize = 11.sp,
                                     color = Color.Gray
                                 )
@@ -2924,7 +2585,7 @@ fun PlayerStatsScreen(
                                         .padding(horizontal = 6.dp, vertical = 2.dp)
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.chivas_badge_format, player.chivasGiven),
+                                        text = "🐐 ${player.chivasGiven} Chivas",
                                         fontWeight = FontWeight.ExtraBold,
                                         fontSize = 10.sp,
                                         color = Color(0xFF78350F)
@@ -2953,7 +2614,7 @@ fun PlayerStatsScreen(
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     Text(
-                                        text = stringResource(id = R.string.estad_sticas_del_jug),
+                                        text = stringResource(id = R.string.estad_sticas_del_jug)ESTADÍSTICAS DEL JUGADOR
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 11.sp,
                                         color = MaterialTheme.colorScheme.primary,
@@ -2963,28 +2624,28 @@ fun PlayerStatsScreen(
 
                                     Divider()
 
-                                    StatRow(label = stringResource(id = R.string.partidos_jugados), value = "${player.gamesPlayed}")
-                                    StatRow(label = stringResource(id = R.string.partidos_ganados_5), value = "${player.gamesWon}")
+                                    StatRow(label = "Partidos Jugados:", value = "${player.gamesPlayed}")
+                                    StatRow(label = "Partidos Ganados:", value = "${player.gamesWon}")
                                     val winRatio = if (player.gamesPlayed == 0) 0f else (player.gamesWon.toFloat() / player.gamesPlayed.toFloat() * 100)
-                                    StatRow(label = stringResource(id = R.string.efectividad_victoria), value = "${String.format("%.1f", winRatio)}%")
+                                    StatRow(label = "Efectividad Victoria:", value = "${String.format("%.1f", winRatio)}%")
 
                                     Divider()
 
-                                    StatRow(label = stringResource(id = R.string.manos_rondas_jugadas), value = "${player.roundsPlayed}")
-                                    StatRow(label = stringResource(id = R.string.manos_ganadas), value = "${player.roundsWon}")
+                                    StatRow(label = "Manoes / Rondas Jugadas:", value = "${player.roundsPlayed}")
+                                    StatRow(label = "Manos Ganadas:", value = "${player.roundsWon}")
                                     val roundRatio = if (player.roundsPlayed == 0) 0f else (player.roundsWon.toFloat() / player.roundsPlayed.toFloat() * 100)
-                                    StatRow(label = stringResource(id = R.string.rendimiento_manos), value = "${String.format("%.1f", roundRatio)}%")
+                                    StatRow(label = "Rendimiento Manos:", value = "${String.format("%.1f", roundRatio)}%")
 
                                     Divider()
 
-                                    StatRow(label = stringResource(id = R.string.puntos_tra_dos_a_mes), value = "${player.totalPointsScored}")
-                                    StatRow(label = stringResource(id = R.string.chivas_propinadas_da), value = "🐐 ${player.chivasGiven}")
-                                    StatRow(label = stringResource(id = R.string.chivas_recibidas), value = "🐐 ${player.chivasReceived}")
+                                    StatRow(label = "Puntos Traídos a Mesa:", value = "${player.totalPointsScored}")
+                                    StatRow(label = "Chivas Propinadas (Dadas):", value = "🐐 ${player.chivasGiven}")
+                                    StatRow(label = "Chivas Recibidas:", value = "🐐 ${player.chivasReceived}")
                                 }
                             },
                             confirmButton = {
                                 Button(onClick = { showDetailDialog = false }) {
-                                    Text(stringResource(id = R.string.regresar))
+                                    Text(stringResource(id = R.string.regresar)Regresar
                                 }
                             },
                             dismissButton = {
@@ -2997,7 +2658,7 @@ fun PlayerStatsScreen(
                                 ) {
                                     Icon(imageVector = Icons.Default.Delete, contentDescription = null, modifier = Modifier.size(16.dp))
                                     Spacer(modifier = Modifier.width(4.dp))
-                                    Text(stringResource(id = R.string.remover_de_club), fontSize = 12.sp)
+                                    Text(stringResource(id = R.string.remover_de_club)Remover de Club fontSize = 12.sp)
                                 }
                             }
                         )
@@ -3016,7 +2677,7 @@ fun PlayerStatsScreen(
                 showAddPlayerDialog = false
                 errorState = ""
             },
-            title = { Text(stringResource(id = R.string.registrar_nuevo_juga)) },
+            title = { Text(stringResource(id = R.string.registrar_nuevo_juga)Registrar Nuevo Jugador },
             text = {
                 OutlinedTextField(
                     value = playerName,
@@ -3024,7 +2685,7 @@ fun PlayerStatsScreen(
                         playerName = it
                         if (it.isNotBlank()) errorState = ""
                     },
-                    label = { Text(stringResource(id = R.string.nombre_completo)) },
+                    label = { Text(stringResource(id = R.string.nombre_completo)Nombre Completo },
                     isError = errorState.isNotBlank(),
                     supportingText = { if (errorState.isNotBlank()) Text(text = errorState, color = BoricuaRed) },
                     singleLine = true,
@@ -3035,7 +2696,7 @@ fun PlayerStatsScreen(
                 Button(
                     onClick = {
                         if (playerName.isBlank()) {
-                            errorState = context.getString(R.string.no_puede_quedar_vac_)
+                            errorState = "No puede quedar vacío"
                         } else {
                             onCreatePlayer(playerName)
                             showAddPlayerDialog = false
@@ -3044,7 +2705,7 @@ fun PlayerStatsScreen(
                         }
                     }
                 ) {
-                    Text(stringResource(id = R.string.aceptar))
+                    Text(stringResource(id = R.string.aceptar)Aceptar
                 }
             },
             dismissButton = {
@@ -3052,7 +2713,7 @@ fun PlayerStatsScreen(
                     showAddPlayerDialog = false
                     errorState = ""
                 }) {
-                    Text(stringResource(id = R.string.cancelar))
+                    Text(stringResource(id = R.string.cancelar)Cancelar
                 }
             }
         )

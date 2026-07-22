@@ -27,12 +27,10 @@
     <string name="puntos_regulares">Puntos Regulares</string>
     <string name="jugador_2">Jugador 2</string>
     <string name="partida_en_curso">PARTIDA EN CURSO</string>
-    <string name="partidas_en_curso_format">PARTIDAS EN CURSO (%1$d)</string>
     <string name="registrar">Registrar</string>
     <string name="meta_500_pts_bono">Meta: 500 pts (Bono)</string>
-    <string name="meta_puntos_format">Meta: %1$d pts</string>
     <string name="ver_r_nking_y_estad_">Ver Ránking y Estadísticas</string>
-    <string name="ronda_1">1ra Ronda</string>
+    <string name="1ra_ronda">1ra Ronda</string>
     <string name="guardar_mano">Guardar Mano</string>
     <string name="buscar_jugador">Buscar jugador...</string>
     <string name="activo">Activo</string>
@@ -45,7 +43,7 @@
     <string name="est_s_seguro_de_que_">¿Estás seguro de que deseas eliminar esta partida del historial? Esta acción no se puede deshacer.</string>
     <string name="capic">Capicú</string>
     <string name="eliminar_partida">Eliminar Partida</string>
-    
+    <string name="else"> else </string>
     <string name="ell_s">Ell@s</string>
     <string name="vs">vs</string>
     <string name="campe_n">Campeón</string>
@@ -61,7 +59,7 @@
     <string name="string_3">, </string>
     <string name="logo">Logo</string>
     <string name="jugador_3">Jugador 3</string>
-    <string name="ronda_4">4ta Ronda</string>
+    <string name="4ta_ronda">4ta Ronda</string>
     <string name="no_seguir_jugando">No, Seguir Jugando</string>
     <string name="valores_de_bonificac">Valores de Bonificación Actuales:</string>
     <string name="ajustes_de_bonificac">Ajustes de Bonificación (500 pts)</string>
@@ -86,7 +84,7 @@
     <string name="l_deres">Líderes</string>
     <string name="a_n_no_hay_rondas_an">Aún no hay rondas anotadas en esta partida. ¡Empieza tirando la chiva!</string>
     <string name="ver">Ver</string>
-    <string name="ronda_3">3ra Ronda</string>
+    <string name="3ra_ronda">3ra Ronda</string>
     <string name="restablecer_nombres_">Restablecer nombres predefinidos</string>
     <string name="anotar_ronda">Anotar Ronda</string>
     <string name="gan">Ganó</string>
@@ -133,39 +131,7 @@
     <string name="uffff_terrible_chiva">🐐 ¡Uffff, terrible Chiva (partido a cero)! 🐐</string>
     <string name="eliminar_de_historia">Eliminar de Historial</string>
     <string name="ganar_por_ambos_lado">Ganar por ambos lados abiertos</string>
-    <string name="ronda_2">2da Ronda</string>
+    <string name="2da_ronda">2da Ronda</string>
     <string name="jugador_4">Jugador 4</string>
     <string name="estad_sticas_del_jug">ESTADÍSTICAS DEL JUGADOR</string>
-    <string name="se_juega_a_format">Se juega a: %1$d puntos</string>
-    <string name="registro_de_rondas">Registro de Rondas / Manos</string>
-    <string name="manos_rondas_jugadas">Manos / Rondas Jugadas:</string>
-    <string name="racha_format">Racha: %1$dV - %2$dD  |  %3$s%% Vic</string>
-
-    <string name="selecciona_idioma_titulo">Selecciona tu idioma</string>
-    <string name="selecciona_idioma_sub">Elige el idioma para usar la aplicación. Puedes cambiarlo en cualquier momento desde el menú.</string>
-    <string name="idioma_espanol">Español</string>
-    <string name="idioma_ingles">English</string>
-    <string name="cambiar_idioma">Cambiar Idioma</string>
-
-    <string name="jugadores_registrados_format">%1$d jugadores registrados</string>
-    <string name="puntos_format">%1$s pts</string>
-    <string name="ronda_1_bonus_format">• Ronda 1: +%1$s pts</string>
-    <string name="ronda_2_bonus_format">• Ronda 2: +%1$s pts</string>
-    <string name="ronda_3_bonus_format">• Ronda 3: +%1$s pts</string>
-    <string name="ronda_4_bonus_format">• Ronda 4: +%1$s pts</string>
-    <string name="capicu_bonus_format">• Capicú: +%1$s pts</string>
-    <string name="chuchazo_bonus_format">• Chuchazo: +%1$s pts</string>
-    <string name="winning_team_format">🏆 %1$s 🏆</string>
-    <string name="marcador_final_format">Marcador Final: %1$s - %2$s</string>
-    <string name="m_round_format">M%1$d</string>
-    <string name="base_bono_format">%1$s base | %2$s bono</string>
-    <string name="capicu_plus_format">Capicú (+%1$d pts)</string>
-    <string name="chuchazo_plus_format">Chuchazo (+%1$d pts)</string>
-    <string name="desglose_puntos_format">📊 Desglose de Puntos para %1$s</string>
-    <string name="bonificacion_ronda_format">Bonificación de Ronda %1$d:</string>
-    <string name="plus_puntos_format">+%1$s pts</string>
-    <string name="cargado_juego_historico">📂 Cargado: Juego Histórico</string>
-    <string name="y_conjunction"> y </string>
-    <string name="porcentaje_de_victoria">% de Victoria</string>
-    <string name="chivas_badge_format">🐐 %1$d Chivas</string>
 </resources>

@@ -18,6 +18,21 @@ import com.example.ui.theme.MyApplicationTheme
 class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    // Read and apply saved language on startup
+    val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+    val lang = sharedPrefs.getString("selected_language", null)
+    if (lang != null) {
+      val locale = java.util.Locale(lang)
+      java.util.Locale.setDefault(locale)
+      val config = resources.configuration
+      config.setLocale(locale)
+      resources.updateConfiguration(config, resources.displayMetrics)
+      
+      val appConfig = applicationContext.resources.configuration
+      appConfig.setLocale(locale)
+      applicationContext.resources.updateConfiguration(appConfig, applicationContext.resources.displayMetrics)
+    }
+
     super.onCreate(savedInstanceState)
     
     // Initialize Database & Repository
@@ -39,5 +54,22 @@ class MainActivity : ComponentActivity() {
         }
       }
     }
+  }
+
+  fun updateLanguage(langCode: String) {
+    val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
+    sharedPrefs.edit().putString("selected_language", langCode).apply()
+    
+    val locale = java.util.Locale(langCode)
+    java.util.Locale.setDefault(locale)
+    val config = resources.configuration
+    config.setLocale(locale)
+    resources.updateConfiguration(config, resources.displayMetrics)
+    
+    val appConfig = applicationContext.resources.configuration
+    appConfig.setLocale(locale)
+    applicationContext.resources.updateConfiguration(appConfig, applicationContext.resources.displayMetrics)
+    
+    recreate()
   }
 }

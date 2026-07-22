@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:width="66dp"
-        android:height="66dp"
-        android:drawable="@drawable/domino_pr"
+        android:width="33dp"
+        android:height="33dp"
+        android:drawable="@drawable/domino_pr_logo2"
         android:gravity="center" />
 </layer-list>
 
