@@ -167,4 +167,5 @@
     <string name="y_conjunction"> and </string>
     <string name="porcentaje_de_victoria">% Victory</string>
     <string name="chivas_badge_format">🐐 %1$d Chivas</string>
+    <string name="calificar_app">Review the app</string>
 </resources>

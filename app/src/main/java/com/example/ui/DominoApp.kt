@@ -4,6 +4,9 @@
 )
 package com.example.ui
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import com.example.MainActivity
 import androidx.compose.animation.*
 import androidx.compose.foundation.*
@@ -372,6 +375,38 @@ fun DominoApp(viewModel: DominoViewModel) {
                                     onClick = {
                                         showMenu = false
                                         showLanguageDialog = true
+                                    }
+                                )
+                                DropdownMenuItem(
+                                    modifier = Modifier.testTag("review_app_menu_item"),
+                                    text = {
+                                        Text(stringResource(id = R.string.calificar_app))
+                                    },
+                                    leadingIcon = {
+                                        Icon(
+                                            imageVector = Icons.Default.RateReview,
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    },
+                                    onClick = {
+                                        showMenu = false
+                                        val packageName = context.packageName
+                                        try {
+                                            val marketIntent = Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("market://details?id=$packageName")
+                                            ).apply {
+                                                addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                                            }
+                                            context.startActivity(marketIntent)
+                                        } catch (e: ActivityNotFoundException) {
+                                            val webIntent = Intent(
+                                                Intent.ACTION_VIEW,
+                                                Uri.parse("https://play.google.com/store/apps/details?id=$packageName")
+                                            )
+                                            context.startActivity(webIntent)
+                                        }
                                     }
                                 )
                             }
