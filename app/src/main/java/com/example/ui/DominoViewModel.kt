@@ -32,6 +32,7 @@ class DominoViewModel(private val repository: DominoRepository) : ViewModel() {
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+@OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
     val activeGameRounds: StateFlow<List<GameRound>> = _activeGameId
         .flatMapLatest { id ->
             if (id != null) repository.getRoundsForGame(id)

@@ -17,6 +17,7 @@ import com.example.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
 
+  @Suppress("DEPRECATION")
   override fun onCreate(savedInstanceState: Bundle?) {
     // Read and apply saved language on startup
     val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
@@ -56,6 +57,7 @@ class MainActivity : ComponentActivity() {
     }
   }
 
+  @Suppress("DEPRECATION")
   fun updateLanguage(langCode: String) {
     val sharedPrefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
     sharedPrefs.edit().putString("selected_language", langCode).apply()

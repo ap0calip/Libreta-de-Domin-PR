@@ -14,8 +14,8 @@ android {
     applicationId = "com.aistudio.dominoboricua.kxmpzq"
     minSdk = 24
     targetSdk = 36
-    versionCode = 26
-    versionName = "26.0"
+    versionCode = 29
+    versionName = "29.0"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -40,6 +40,7 @@ android {
     release {
       isCrunchPngs = false
       isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
       signingConfig = signingConfigs.getByName("release")
       ndk {

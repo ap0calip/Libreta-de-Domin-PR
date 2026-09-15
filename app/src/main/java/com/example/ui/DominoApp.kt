@@ -992,7 +992,7 @@ fun DashboardScreen(
                         // Expanded View with player names and deletion
                         if (isExpanded) {
                             Spacer(modifier = Modifier.height(12.dp))
-                            Divider(color = Color.LightGray.copy(alpha = 0.5f))
+                            HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
                             Spacer(modifier = Modifier.height(8.dp))
 
                             Text(
@@ -2996,21 +2996,21 @@ fun PlayerStatsScreen(
                                         modifier = Modifier.fillMaxWidth()
                                     )
 
-                                    Divider()
+                                    HorizontalDivider()
 
                                     StatRow(label = stringResource(id = R.string.partidos_jugados), value = "${player.gamesPlayed}")
                                     StatRow(label = stringResource(id = R.string.partidos_ganados_5), value = "${player.gamesWon}")
                                     val winRatio = if (player.gamesPlayed == 0) 0f else (player.gamesWon.toFloat() / player.gamesPlayed.toFloat() * 100)
                                     StatRow(label = stringResource(id = R.string.efectividad_victoria), value = "${String.format("%.1f", winRatio)}%")
 
-                                    Divider()
+                                    HorizontalDivider()
 
                                     StatRow(label = stringResource(id = R.string.manos_rondas_jugadas), value = "${player.roundsPlayed}")
                                     StatRow(label = stringResource(id = R.string.manos_ganadas), value = "${player.roundsWon}")
                                     val roundRatio = if (player.roundsPlayed == 0) 0f else (player.roundsWon.toFloat() / player.roundsPlayed.toFloat() * 100)
                                     StatRow(label = stringResource(id = R.string.rendimiento_manos), value = "${String.format("%.1f", roundRatio)}%")
 
-                                    Divider()
+                                    HorizontalDivider()
 
                                     StatRow(label = stringResource(id = R.string.puntos_tra_dos_a_mes), value = "${player.totalPointsScored}")
                                     StatRow(label = stringResource(id = R.string.chivas_propinadas_da), value = "🐐 ${player.chivasGiven}")

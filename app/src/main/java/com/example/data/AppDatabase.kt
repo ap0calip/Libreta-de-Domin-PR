@@ -25,7 +25,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "domino_boricua_database"
                 )
-                .fallbackToDestructiveMigration() // simple fallback for schema changes
+                .fallbackToDestructiveMigration(dropAllTables = true) // simple fallback for schema changes
                 .build()
                 INSTANCE = instance
                 instance
